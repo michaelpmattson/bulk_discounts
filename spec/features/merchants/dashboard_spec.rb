@@ -150,7 +150,6 @@ RSpec.describe 'Merchant Dashboard page' do
 
     it 'links to the invoice show page from each invoice id' do
       click_link("Invoice ##{@g_in_item_1.invoice_id}")
-      save_and_open_page
       expect(current_path).to eq("/merchants/#{@merchant.id}/invoices/#{@g_in_item_1.invoice_id}")
     end
   end

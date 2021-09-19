@@ -6,7 +6,7 @@
   <h3>Items Ready to Ship</h3>
   <ul>
     <% @merchant.items_ready.each do |item| %>
-      <li id="item-<%= item.id %>"><%= item.name %> - <%= link_to "Invoice ##{item.invoice_id}", url: "merchants/#{@merchant.id}/invoices/#{item.invoice_id}" %></li>
+      <li id="item-<%= item.id %>"><%= item.name %> - <%= link_to "Invoice ##{item.invoice_id}", merchant_invoice_path(@merchant.id, item.invoice_id) %></li>
     <% end %>
   </ul>
 </section>
