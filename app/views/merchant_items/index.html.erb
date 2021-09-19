@@ -23,6 +23,6 @@
 <ol id='top-items'>
   <h3>Top Items</h3>
   <% @merchant.top_items.each do |item| %>
-    <li><%= link_to item.name, merchant_item_path(@merchant.id, item.id) %></li>
+    <li><%= link_to item.name, merchant_item_path(@merchant.id, item.id) %> - $<%= item.total %> in sales</li>
   <% end %>
 </ol>
