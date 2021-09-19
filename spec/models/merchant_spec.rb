@@ -127,4 +127,28 @@ RSpec.describe Merchant, type: :model do
       expect(@merchant.favorite_customers).to eq([@customer_1, @customer_2, @customer_3, @customer_4, @customer_5])
     end
   end
+
+  context 'items_ready' do
+    before(:each) do
+      @merchant    = create(:merchant)
+
+      @good_item_1 = create(:item, merchant_id: @merchant.id)
+      @g_in_item_1 = create(:invoice_item, item_id: @good_item_1.id)
+      @good_item_2 = create(:item, merchant_id: @merchant.id, name: 'crackers')
+      @g_in_item_2 = create(:invoice_item, item_id: @good_item_2.id)
+      @good_item_3 = create(:item, merchant_id: @merchant.id, name: 'pickles')
+      @g_in_item_3 = create(:invoice_item, item_id: @good_item_3.id, status: 1)
+      @good_item_4 = create(:item, merchant_id: @merchant.id, name: 'biscuits')
+      @g_in_item_4 = create(:invoice_item, item_id: @good_item_4.id, status: 1)
+
+      @bad_item_1  = create(:item, merchant_id: @merchant.id, name: 'candy')
+      @b_in_item_1 = create(:invoice_item, item_id: @bad_item_1.id, status: 2)
+      @bad_item_2  = create(:item, merchant_id: @merchant.id, name: 'walnuts')
+      @b_in_item_2 = create(:invoice_item, item_id: @bad_item_2.id, status: 3)
+    end
+
+    it 'returns items that are not shipped or unknown' do
+      expect(@merchant.items_ready).to eq([@good_item_1, @good_item_2, @good_item_3, @good_item_4])
+    end
+  end
 end
