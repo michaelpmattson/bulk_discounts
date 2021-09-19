@@ -150,5 +150,10 @@ RSpec.describe Merchant, type: :model do
     it 'returns items that are not shipped or unknown' do
       expect(@merchant.items_ready).to eq([@good_item_1, @good_item_2, @good_item_3, @good_item_4])
     end
+
+    it 'has the invoice id' do
+      items_ready = @merchant.items_ready
+      expect(items_ready.first.invoice_id).to eq(@g_in_item_1.invoice_id)
+    end
   end
 end
