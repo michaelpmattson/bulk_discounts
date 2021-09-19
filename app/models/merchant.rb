@@ -1,6 +1,7 @@
 class Merchant < ApplicationRecord
   validates :name, presence: true
   has_many :items,   dependent: :destroy
+  has_many :invoice_items, through: :items
   has_many :invoices,  through: :items
   has_many :customers, through: :invoices
 
@@ -17,7 +18,7 @@ class Merchant < ApplicationRecord
   end
 
   def inv_items_ready
-    InvoiceItem.joins(item: :merchant).where(status: ['packaged', 'pending'])
+    invoice_items.where(status: ['packaged', 'pending'])
   end
 
   def update_status(new_status)

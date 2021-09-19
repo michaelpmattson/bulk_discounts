@@ -7,4 +7,8 @@ class InvoiceItem < ApplicationRecord
   def item_name
     item.name
   end
+
+  def formatted_date
+    invoice.formatted_date
+  end
 end

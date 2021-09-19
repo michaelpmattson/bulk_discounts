@@ -153,9 +153,12 @@ RSpec.describe 'Merchant Dashboard page' do
       expect(current_path).to eq("/merchants/#{@merchant.id}/invoices/#{@g_in_item_1.invoice_id}")
     end
 
-    # it 'displays the invoice created date' do
-    #
-    # end
+    it 'displays the invoice created date' do
+      expected = @good_item_1.created_at.strftime("%A, %B %d, %Y")
+      within "#item-#{@g_in_item_1.invoice_id}" do
+        expect(page).to have_content(expected)
+      end
+    end
   end
 end
 
