@@ -155,7 +155,7 @@ RSpec.describe 'Merchant Items Index page' do
     it 'shows names of top items by revenue generated' do
       within '#top-items' do
         expect(@item_5.name).to appear_before(@item_4.name)
-        
+
         expect(page).to     have_content(@item_2.name)
         expect(page).to     have_content(@item_3.name)
         expect(page).to     have_content(@item_4.name)
@@ -167,8 +167,11 @@ RSpec.describe 'Merchant Items Index page' do
       end
     end
 
-    xit 'links name to merchant item show page for item' do
-
+    it 'links name to merchant item show page for item' do
+      within '#top-items' do
+        click_link(@item_6.name)
+        expect(current_path).to eq("/merchants/#{@merchant_1.id}/items/#{@item_6.id}")
+      end
     end
 
     xit 'shows total revenue next to each item' do
