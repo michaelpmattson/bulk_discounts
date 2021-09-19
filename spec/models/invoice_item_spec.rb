@@ -29,4 +29,17 @@ RSpec.describe InvoiceItem, type: :model do
       expect(invoice_item.status).to eq('unknown')
     end
   end
+
+  describe '#instance methods' do
+    before(:each) do
+      @item     = create(:item)
+      @inv_item = create(:invoice_item, item_id: @item.id)
+    end
+
+    describe 'item_name' do
+      it 'returns an item name' do
+        expect(@inv_item.item_name).to eq(@item.name)
+      end
+    end
+  end
 end

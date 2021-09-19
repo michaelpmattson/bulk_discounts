@@ -16,16 +16,12 @@ class Merchant < ApplicationRecord
     items.disabled
   end
 
-  def items_ready
-    items.joins(:invoice_items).where(invoice_items: {status: ['packaged', 'pending']}).select('items.*, invoice_items.invoice_id')
+  def inv_items_ready
+    InvoiceItem.joins(item: :merchant).where(status: ['packaged', 'pending'])
   end
 
   def update_status(new_status)
     update(status: new_status)
-  end
-
-  def disabled?
-    status == 'Disabled'
   end
 
   def self.enabled_merchants
@@ -36,3 +32,8 @@ class Merchant < ApplicationRecord
     where status: 'Disabled'
   end
 end
+
+
+# def disabled?
+#   status == 'Disabled'
+# end

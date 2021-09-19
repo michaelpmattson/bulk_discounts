@@ -29,13 +29,6 @@ RSpec.describe Merchant, type: :model do
       end
     end
 
-    describe 'disabled?' do
-      it 'returns true is disabled' do
-        expect(@merchant.disabled?).to eq(true)
-        expect(@merchant_2.disabled?).to eq(false)
-      end
-    end
-
     describe 'update_status' do
       it 'updates merchant status' do
         @merchant_2.update_status('Disabled')
@@ -128,7 +121,7 @@ RSpec.describe Merchant, type: :model do
     end
   end
 
-  context 'items_ready' do
+  context 'inv_items_ready' do
     before(:each) do
       @merchant    = create(:merchant)
 
@@ -147,13 +140,16 @@ RSpec.describe Merchant, type: :model do
       @b_in_item_2 = create(:invoice_item, item_id: @bad_item_2.id, status: 3)
     end
 
-    it 'returns items that are not shipped or unknown' do
-      expect(@merchant.items_ready).to eq([@good_item_1, @good_item_2, @good_item_3, @good_item_4])
-    end
-
-    it 'has the invoice id' do
-      items_ready = @merchant.items_ready
-      expect(items_ready.first.invoice_id).to eq(@g_in_item_1.invoice_id)
+    it 'returns invoice items that are not shipped or unknown' do
+      expect(@merchant.inv_items_ready).to eq([@g_in_item_1, @g_in_item_2, @g_in_item_3, @g_in_item_4])
     end
   end
 end
+
+
+# describe 'disabled?' do
+#   it 'returns true is disabled' do
+#     expect(@merchant.disabled?).to eq(true)
+#     expect(@merchant_2.disabled?).to eq(false)
+#   end
+# end
