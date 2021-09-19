@@ -19,3 +19,10 @@
       </li>
   <% end %>
 </ul>
+
+<ol id='top-items'>
+  <h3>Top Items</h3>
+  <% @merchant.top_items.each do |item| %>
+    <li><%= item.name %></li>
+  <% end %>
+</ol>
