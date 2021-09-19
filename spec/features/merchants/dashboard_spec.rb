@@ -86,7 +86,7 @@ RSpec.describe 'Merchant Dashboard page' do
       @customer_7    = create(:customer)
       @invoice_7     = create(:invoice, customer_id: @customer_7.id)
       @invoice_item_7 = create(:invoice_item, item_id: @item_2.id, invoice_id: @invoice_7.id)
-      binding.pry
+
       visit "/merchants/#{@merchant.id}/dashboard"
     end
 
