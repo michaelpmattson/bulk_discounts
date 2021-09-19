@@ -23,5 +23,31 @@ RSpec.describe InvoiceItem, type: :model do
       invoice_item = build(:invoice_item, status: 2)
       expect(invoice_item.status).to eq('shipped')
     end
+
+    it 'can be unknown' do
+      invoice_item = build(:invoice_item, status: 3)
+      expect(invoice_item.status).to eq('unknown')
+    end
+  end
+
+  describe '#instance methods' do
+    before(:each) do
+      @item     = create(:item)
+      @inv_item = create(:invoice_item, item_id: @item.id)
+    end
+
+    describe 'item_name' do
+      it 'returns an item name' do
+        expect(@inv_item.item_name).to eq(@item.name)
+      end
+    end
+
+    describe '#formatted_date' do
+      it 'returns the creation date of the invoice' do
+        invoice = create(:invoice, created_at: 'Sun, 19 Sep 2021 11:11:11 UTC +00:00')
+        invoice_item = create(:invoice_item, invoice_id: invoice.id)
+        expect(invoice_item.formatted_date).to eq("Sunday, September 19, 2021")
+      end
+    end
   end
 end

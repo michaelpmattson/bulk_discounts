@@ -1,6 +1,7 @@
 class Merchant < ApplicationRecord
   validates :name, presence: true
   has_many :items,   dependent: :destroy
+  has_many :invoice_items, through: :items
   has_many :invoices,  through: :items
   has_many :customers, through: :invoices
 
@@ -16,12 +17,12 @@ class Merchant < ApplicationRecord
     items.disabled
   end
 
-  def update_status(new_status)
-    update(status: new_status)
+  def inv_items_ready
+    invoice_items .joins(:invoice).where(status: ['packaged', 'pending']).order('invoices.created_at')
   end
 
-  def disabled?
-    status == 'Disabled'
+  def update_status(new_status)
+    update(status: new_status)
   end
 
   def self.enabled_merchants
@@ -32,3 +33,8 @@ class Merchant < ApplicationRecord
     where status: 'Disabled'
   end
 end
+
+
+# def disabled?
+#   status == 'Disabled'
+# end

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     post '/items',     to: 'merchant_items#create'
     resources :items, only: [:new, :show, :edit, :update]
 
-    get  '/invoices',  to: 'merchant_invoices#index'
+    get  '/invoices',     to: 'merchant_invoices#index'
     get  '/invoices/:id', to: 'merchant_invoices#show', as: 'invoice'
   end
 
