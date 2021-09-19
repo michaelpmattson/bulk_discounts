@@ -18,7 +18,11 @@ class Merchant < ApplicationRecord
   end
 
   def inv_items_ready
-    invoice_items .joins(:invoice).where(status: ['packaged', 'pending']).order('invoices.created_at')
+    invoice_items.joins(:invoice).where(status: ['packaged', 'pending']).order('invoices.created_at')
+  end
+
+  def top_items
+    items.top_items
   end
 
   def update_status(new_status)

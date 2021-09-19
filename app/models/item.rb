@@ -18,6 +18,15 @@ class Item < ApplicationRecord
       update(status: "Disabled")
     end
   end
+
+  def self.top_items
+    joins(invoice_items: { invoice: :transactions }).
+      where(transactions: {result: 'success'}).
+      group(:id).
+      select('items.*, SUM(invoice_items.quantity * invoice_items.unit_price) AS total').
+      order('total DESC').
+      limit(5)
+  end
 end
 
 

@@ -97,4 +97,88 @@ RSpec.describe 'Merchant Items Index page' do
       expect(page).to have_content('cotton-candy')
     end
   end
+
+  context '5 most popular items' do
+    before(:each) do
+      @merchant_1 = create(:merchant)
+
+      @item_1 = create(:item, merchant_id: @merchant_1.id) # 12345
+      @item_2 = create(:item, merchant_id: @merchant_1.id, name: 'cake')
+      @item_3 = create(:item, merchant_id: @merchant_1.id, name: 'crackers')
+      @item_4 = create(:item, merchant_id: @merchant_1.id, name: 'candy')
+      @item_5 = create(:item, merchant_id: @merchant_1.id, name: 'biscuits')
+      @item_6 = create(:item, merchant_id: @merchant_1.id, name: 'crisps')
+      @item_7 = create(:item, merchant_id: @merchant_1.id, name: 'pickles')
+      @item_8 = create(:item, merchant_id: @merchant_1.id, name: 'pie')
+      @item_9 = create(:item, merchant_id: @merchant_1.id, name: 'carrots')
+
+      @inv_11 = create(:invoice)
+      @inv_12 = create(:invoice)
+      @inv_13 = create(:invoice)
+      @inv_14 = create(:invoice)
+      @inv_15 = create(:invoice)
+      @inv_16 = create(:invoice)
+      @inv_17 = create(:invoice)
+      @inv_18 = create(:invoice)
+      @inv_19 = create(:invoice)
+
+      @ii_11 = create(:invoice_item, item_id: @item_1.id, invoice_id: @inv_11.id) #12345
+      @ii_12 = create(:invoice_item, item_id: @item_2.id, invoice_id: @inv_12.id, unit_price: 22345)
+      @ii_13 = create(:invoice_item, item_id: @item_3.id, invoice_id: @inv_13.id, unit_price: 32345)
+      @ii_14 = create(:invoice_item, item_id: @item_4.id, invoice_id: @inv_14.id, unit_price: 52345)
+      @ii_15 = create(:invoice_item, item_id: @item_5.id, invoice_id: @inv_15.id, unit_price: 92345)
+      @ii_16 = create(:invoice_item, item_id: @item_6.id, invoice_id: @inv_16.id, unit_price: 42345)
+      @ii_17 = create(:invoice_item, item_id: @item_7.id, invoice_id: @inv_17.id, unit_price: 72345)
+      @ii_18 = create(:invoice_item, item_id: @item_8.id, invoice_id: @inv_18.id, unit_price: 82345)
+      @ii_19 = create(:invoice_item, item_id: @item_9.id, invoice_id: @inv_19.id, unit_price: 62345)
+
+      @tr_11 = create(:transaction, result: 'success', invoice_id: @inv_11.id)
+      @tr_12 = create(:transaction, result: 'success', invoice_id: @inv_12.id)
+      @tr_13 = create(:transaction, result: 'success', invoice_id: @inv_13.id)
+      @tr_14 = create(:transaction, result: 'success', invoice_id: @inv_14.id)
+      @tr_15 = create(:transaction, result: 'success', invoice_id: @inv_15.id)
+      @tr_16 = create(:transaction, result: 'success', invoice_id: @inv_16.id)
+
+      @tr_17 = create(:transaction, invoice_id: @inv_17.id) #failed
+      @tr_18 = create(:transaction, invoice_id: @inv_18.id) #failed
+      @tr_19 = create(:transaction, invoice_id: @inv_19.id) #failed
+
+      @merchant_2 = create(:merchant)
+      @item_22 = create(:item, merchant_id: @merchant_2.id, unit_price: 999999, name: 'waffles')
+      @inv_22 = create(:invoice)
+      @ii_22 = create(:invoice_item, item_id: @item_22.id, invoice_id: @inv_22.id)
+      @tr_22 = create(:transaction, result: 'success', invoice_id: @inv_22.id)
+
+      visit "/merchants/#{@merchant_1.id}/items"
+    end
+
+    it 'shows names of top items by revenue generated' do
+      within '#top-items' do
+        expect(@item_5.name).to appear_before(@item_4.name)
+
+        expect(page).to     have_content(@item_2.name)
+        expect(page).to     have_content(@item_3.name)
+        expect(page).to     have_content(@item_4.name)
+        expect(page).to     have_content(@item_5.name)
+        expect(page).to     have_content(@item_6.name)
+
+        expect(page).to_not have_content(@item_1.name)
+        expect(page).to_not have_content(@item_7.name)
+      end
+    end
+
+    it 'links name to merchant item show page for item' do
+      within '#top-items' do
+        click_link(@item_6.name)
+        expect(current_path).to eq("/merchants/#{@merchant_1.id}/items/#{@item_6.id}")
+      end
+    end
+
+    it 'shows total revenue next to each item' do
+      within '#top-items' do
+        expectation = @ii_12.unit_price * @ii_12.quantity
+        expect(page).to have_content(expectation)
+      end
+    end
+  end
 end
