@@ -23,5 +23,10 @@ RSpec.describe InvoiceItem, type: :model do
       invoice_item = build(:invoice_item, status: 2)
       expect(invoice_item.status).to eq('shipped')
     end
+
+    it 'can be unknown' do
+      invoice_item = build(:invoice_item, status: 3)
+      expect(invoice_item.status).to eq('unknown')
+    end
   end
 end

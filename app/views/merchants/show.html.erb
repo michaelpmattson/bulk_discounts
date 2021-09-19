@@ -2,6 +2,15 @@
 <%= link_to 'My Items', merchant_items_path %>
 <%= link_to 'My Invoices', merchant_invoices_path %>
 
+<section id='items-ready'>
+  <h3>Items Ready to Ship</h3>
+  <ul>
+    <% @merchant.items_ready.each do |item| %>
+      <li id="item-<%= item.id %>"><%= item.name %> - <%= link_to "Invoice ##{item.invoice_id}", url: "merchants/#{@merchant.id}/invoices/#{item.invoice_id}" %></li>
+    <% end %>
+  </ul>
+</section>
+
 <section id='favorite-customers'>
   <h3>Favorite Customers</h3>
   <ol>

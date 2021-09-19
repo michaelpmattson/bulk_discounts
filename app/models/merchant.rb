@@ -17,7 +17,7 @@ class Merchant < ApplicationRecord
   end
 
   def items_ready
-    items.joins(:invoice_items).where(invoice_items: {status: ['packaged', 'pending']})
+    items.joins(:invoice_items).where(invoice_items: {status: ['packaged', 'pending']}).select('items.*, invoice_items.invoice_id')
   end
 
   def update_status(new_status)
