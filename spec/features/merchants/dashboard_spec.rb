@@ -115,8 +115,8 @@ RSpec.describe 'Merchant Dashboard page' do
 
       @good_item_1 = create(:item, merchant_id: @merchant.id)
       @g_in_item_1 = create(:invoice_item, item_id: @good_item_1.id)
-      @good_item_2 = create(:item, merchant_id: @merchant.id, name: 'crackers')
-      @g_in_item_2 = create(:invoice_item, item_id: @good_item_2.id)
+      # @good_item_2 = create(:item, merchant_id: @merchant.id, name: 'crackers')
+      @g_in_item_2 = create(:invoice_item, item_id: @good_item_1.id)
       @good_item_3 = create(:item, merchant_id: @merchant.id, name: 'pickles')
       @g_in_item_3 = create(:invoice_item, item_id: @good_item_3.id, status: 1)
       @good_item_4 = create(:item, merchant_id: @merchant.id, name: 'biscuits')
@@ -126,14 +126,14 @@ RSpec.describe 'Merchant Dashboard page' do
       @b_in_item_1 = create(:invoice_item, item_id: @bad_item_1.id, status: 2)
       @bad_item_2  = create(:item, merchant_id: @merchant.id, name: 'walnuts')
       @b_in_item_2 = create(:invoice_item, item_id: @bad_item_2.id, status: 3)
-
+      # binding.pry
       visit "/merchants/#{@merchant.id}/dashboard"
     end
 
     it 'has a section for items that are not shipped or unknown' do
       within '#items-ready' do
+        save_and_open_page
         expect(page).to     have_content(@good_item_1.name)
-        expect(page).to     have_content(@good_item_2.name)
         expect(page).to     have_content(@good_item_3.name)
         expect(page).to     have_content(@good_item_4.name)
 
@@ -143,7 +143,7 @@ RSpec.describe 'Merchant Dashboard page' do
     end
 
     it 'has each item invoice id' do
-      within "#item-#{@good_item_1.id}" do
+      within "#item-#{@g_in_item_1.invoice_id}" do
         expect(page).to have_content("Invoice ##{@g_in_item_1.invoice_id}")
       end
     end
@@ -152,5 +152,16 @@ RSpec.describe 'Merchant Dashboard page' do
       click_link("Invoice ##{@g_in_item_1.invoice_id}")
       expect(current_path).to eq("/merchants/#{@merchant.id}/invoices/#{@g_in_item_1.invoice_id}")
     end
+
+    it 'displays the invoice created date' do
+
+    end
   end
 end
+
+# As a merchant
+# When I visit my merchant dashboard
+# In the section for "Items Ready to Ship",
+# Next to each Item name I see the date that the invoice was created
+# And I see the date formatted like "Monday, July 18, 2019"
+# And I see that the list is ordered from oldest to newest
