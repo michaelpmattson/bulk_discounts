@@ -168,7 +168,6 @@ RSpec.describe 'admin merchants index page', type: :feature do
         expect(@merchant_6.name).to appear_before(@merchant_3.name)
         expect(@merchant_3.name).to appear_before(@merchant_4.name)
         expect(@merchant_4.name).to appear_before(@merchant_1.name)
-        save_and_open_page
       end
     end
   end
