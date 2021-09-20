@@ -91,7 +91,6 @@ RSpec.describe 'Merchant Dashboard page' do
     end
 
     it 'has the top 5 customers (most successful transactions)' do
-      # save_and_open_page
       within '#favorite-customers' do
         expect(page).to     have_content(@customer_1.full_name)
         expect(page).to     have_content(@customer_2.full_name)

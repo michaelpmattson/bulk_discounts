@@ -14,4 +14,12 @@ RSpec.describe Invoice, type: :model do
       expect(invoice.formatted_date).to eq("Sunday, September 19, 2021")
     end
   end
+
+  describe '#customer_name' do
+    it 'returns a customers full name' do
+      customer = create(:customer)
+      invoice = create(:invoice, customer_id: customer.id)
+      expect(invoice.customer_name).to eq "John Doe"
+    end
+  end
 end
