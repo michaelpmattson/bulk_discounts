@@ -41,20 +41,83 @@ RSpec.describe Merchant, type: :model do
 
   describe '#class methods' do
     before(:each) do
+      @transaction_s = create(:transaction, result: 'success')
+      @transaction_f = create(:transaction)
       @merchant = create(:merchant)
-      @merchant_2 = create(:merchant, name: "Jennys Jewels", status: 'Enabled')
       @disabled_item_1 = create(:item, merchant: @merchant)
       @disabled_item_2 = create(:item, merchant: @merchant)
       @enabled_item_1  = create(:item, merchant: @merchant, status: 'Enabled')
       @enabled_item_2  = create(:item, merchant: @merchant, status: 'Enabled')
+      @invoice_1 = create(:invoice)
+      @invoice_1.transactions << @transaction_s
+      @i_i_1 = create(:invoice_item, item: @enabled_item_1, unit_price: 2, quantity: 2, invoice: @invoice_1)
+      @i_i_2 = create(:invoice_item, item: @enabled_item_1, unit_price: 2, quantity: 2, invoice: @invoice_1)
+      @i_i_3 = create(:invoice_item, item: @enabled_item_1, unit_price: 2, quantity: 2, invoice: @invoice_1)
+
+      @merchant_2 = create(:merchant, name: "Jennys Jewels", status: 'Enabled')
+      @item_2 = create(:item, merchant: @merchant_2)
+      @invoice_2 = create(:invoice)
+      @transaction_s_2 = create(:transaction, result: 'success')
+      @invoice_2.transactions << @transaction_s_2
+      @i_i_4 = create(:invoice_item, item: @item_2, unit_price: 2, quantity: 1, invoice: @invoice_2)
+      @i_i_5 = create(:invoice_item, item: @item_2, unit_price: 2, quantity: 1, invoice: @invoice_2)
+      @i_i_6 = create(:invoice_item, item: @item_2, unit_price: 2, quantity: 1, invoice: @invoice_2)
+
+      @merchant_3 = create(:merchant, name: "Super Sam", status: 'Enabled')
+      @item_3 = create(:item, merchant: @merchant_3)
+      @invoice_3 = create(:invoice)
+      @transaction_s_3 = create(:transaction, result: 'success')
+      @invoice_3.transactions << @transaction_s_3
+      @i_i_7 = create(:invoice_item, item: @item_3, unit_price: 2, quantity: 4, invoice: @invoice_3)
+      @i_i_8 = create(:invoice_item, item: @item_3, unit_price: 2, quantity: 4, invoice: @invoice_3)
+      @i_i_9 = create(:invoice_item, item: @item_3, unit_price: 2, quantity: 4, invoice: @invoice_3)
+
+      @merchant_4 = create(:merchant, name: "Random Rogers", status: 'Enabled')
+      @item_4 = create(:item, merchant: @merchant_4)
+      @invoice_4 = create(:invoice)
+      @transaction_s_4 = create(:transaction, result: 'success')
+      @invoice_4.transactions << @transaction_s_4
+      @i_i_10 = create(:invoice_item, item: @item_4, unit_price: 2, quantity: 3, invoice: @invoice_4)
+      @i_i_11 = create(:invoice_item, item: @item_4, unit_price: 2, quantity: 3, invoice: @invoice_4)
+      @i_i_12 = create(:invoice_item, item: @item_4, unit_price: 2, quantity: 3, invoice: @invoice_4)
+
+      @merchant_5 = create(:merchant, name: "Caras Cupcakes", status: 'Enabled')
+      @item_5 = create(:item, merchant: @merchant_5)
+      @invoice_5 = create(:invoice)
+      @transaction_s_5 = create(:transaction, result: 'success')
+      @invoice_5.transactions << @transaction_s_5
+      @i_i_13 = create(:invoice_item, item: @item_5, unit_price: 2, quantity: 6, invoice: @invoice_5)
+      @i_i_14 = create(:invoice_item, item: @item_5, unit_price: 2, quantity: 6, invoice: @invoice_5)
+      @i_i_15 = create(:invoice_item, item: @item_5, unit_price: 2, quantity: 6, invoice: @invoice_5)
+
+      @merchant_6 = create(:merchant, name: "Steve Sews", status: 'Enabled')
+      @item_6 = create(:item, merchant: @merchant_6)
+      @invoice_6 = create(:invoice)
+      @transaction_s_6 = create(:transaction, result: 'success')
+      @invoice_6.transactions << @transaction_s_6
+      @i_i_16 = create(:invoice_item, item: @item_6, unit_price: 2, quantity: 5, invoice: @invoice_6)
+      @i_i_17 = create(:invoice_item, item: @item_6, unit_price: 2, quantity: 5, invoice: @invoice_6)
+      @i_i_18 = create(:invoice_item, item: @item_6, unit_price: 2, quantity: 5, invoice: @invoice_6)
+
+      @merchant_7 = create(:merchant, name: "Vins Vinyl", status: 'Enabled')
+      @item_7 = create(:item, merchant: @merchant_7)
+      @invoice_7 = create(:invoice)
+      @invoice_7.transactions << @transaction_f
+      @i_i_19 = create(:invoice_item, item: @item_7, unit_price: 2, quantity: 6, invoice: @invoice_7)
+      @i_i_20 = create(:invoice_item, item: @item_7, unit_price: 2, quantity: 6, invoice: @invoice_7)
+      @i_i_21 = create(:invoice_item, item: @item_7, unit_price: 2, quantity: 6, invoice: @invoice_7)
     end
 
     it '#enabled_merchants' do
-      expect(Merchant.enabled_merchants).to eq([@merchant_2])
+      expect(Merchant.enabled_merchants).to eq([@merchant_2, @merchant_3, @merchant_4, @merchant_5, @merchant_6, @merchant_7])
     end
 
     it '#disabled_merchants' do
       expect(Merchant.disabled_merchants).to eq([@merchant])
+    end
+
+    it '#top_five' do
+      expect(Merchant.top_five).to eq([@merchant_5, @merchant_6, @merchant_3, @merchant_4, @merchant])
     end
   end
 
