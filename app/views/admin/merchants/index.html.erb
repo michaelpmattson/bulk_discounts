@@ -23,9 +23,11 @@
   </section>
 <section id='top-merchants'>
   <h3>Top Five Merchants</h3>
-  <% @merchants.top_five.each do |merchant| %>
-    <ol>
-      <li><%= link_to merchant.name, admin_merchant_path(merchant.id), method: :get %> - <%= number_to_currency(merchant.revenue) %> in sales</li>
-    </ol>
-  <% end %>
+  <ol>
+    <% @merchants.top_five.each do |merchant| %>
+      <li id="top-<%= merchant.id %>"><%= link_to merchant.name, admin_merchant_path(merchant.id), method: :get %> - <%= number_to_currency(merchant.revenue) %> in sales.<br>
+        Top selling date for <%= merchant.name %> was <%= merchant.best_day.strftime("%m/%d/%y") %>
+      </li>
+    <% end %>
+  </ol>
 </section>
