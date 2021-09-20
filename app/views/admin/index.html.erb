@@ -1,3 +1,12 @@
 <h2>Admin Dashboard</h2>
 <%= link_to 'Merchants', admin_merchants_path %>
 <%= link_to 'Invoices', admin_invoices_path %>
+
+<section id='top-customers'>
+  <h3>Top Customers</h3>
+  <ol>
+    <% @customers.top_five_with_count.each do |customer| %>
+      <li id="customer-<%= customer.id %>"><%= customer.full_name %> - <%= customer.t_count %> purchases</li>
+    <% end %>
+  </ol>
+</section>
