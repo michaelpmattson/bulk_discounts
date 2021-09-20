@@ -1,4 +1,6 @@
 class Invoice < ApplicationRecord
+  enum status: [:packaged, :pending, :shipped, :unknown]
+
   belongs_to :customer
   has_many   :transactions,  dependent: :destroy
   has_many   :invoice_items, dependent: :destroy
