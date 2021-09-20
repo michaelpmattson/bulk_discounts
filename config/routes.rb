@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     get  '/invoices/:id', to: 'merchant_invoices#show', as: 'invoice'
   end
 
+  resources :admin, only: [:index]
+
   namespace :admin, only: [:index, :show, :edit, :update, :new, :create] do
     resources :merchants
   end
