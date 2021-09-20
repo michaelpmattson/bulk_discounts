@@ -29,6 +29,15 @@ class Merchant < ApplicationRecord
     update(status: new_status)
   end
 
+  def best_day
+    invoice = invoices.joins(:transactions)
+    .where('transactions.result = ?', 'success')
+    .select("invoices.created_at, COUNT(*) AS successful_transactions")
+    .group('invoices.created_at')
+    .order('successful_transactions DESC, invoices.created_at DESC')
+    .first.created_at
+  end
+
   def self.enabled_merchants
     where status: 'Enabled'
   end
