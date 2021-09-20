@@ -30,7 +30,7 @@ class Merchant < ApplicationRecord
   end
 
   def best_day
-    invoice = invoices.joins(:transactions)
+    invoices.joins(:transactions)
     .where('transactions.result = ?', 'success')
     .select("invoices.created_at, COUNT(*) AS successful_transactions")
     .group('invoices.created_at')
