@@ -8,6 +8,9 @@ RSpec.describe Invoice, type: :model do
     it { should have_many(:items).through(:invoice_items) }
   end
 
+  describe 'enums' do
+    it { should define_enum_for(:status) }
+  end
   describe '#formatted_date' do
     it 'returns the date with weekday, month, date, year' do
       invoice = create(:invoice, created_at: 'Sun, 19 Sep 2021 11:11:11 UTC +00:00')

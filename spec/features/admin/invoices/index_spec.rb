@@ -16,19 +16,19 @@ RSpec.describe 'admin invoices index page', type: :feature do
 
   it 'lists all invoices' do
     within("#invoice-#{@invoice_1.id}") do
-      expect(page).to have_link("Invoice #{@invoice_1.id}")
+      expect(page).to have_link("Invoice ##{@invoice_1.id}")
     end
     within("#invoice-#{@invoice_2.id}") do
-      expect(page).to have_link("Invoice #{@invoice_2.id}")
+      expect(page).to have_link("Invoice ##{@invoice_2.id}")
     end
     within("#invoice-#{@invoice_3.id}") do
-      expect(page).to have_link("Invoice #{@invoice_3.id}")
+      expect(page).to have_link("Invoice ##{@invoice_3.id}")
     end
   end
 
   it 'invoice ids link to show page' do
     within("#invoice-#{@invoice_1.id}") do
-      click_on "Invoice #{@invoice_1.id}"
+      click_on "Invoice ##{@invoice_1.id}"
     end
     expect(current_path).to eq("/admin/invoices/#{@invoice_1.id}")
   end

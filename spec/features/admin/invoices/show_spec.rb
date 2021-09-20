@@ -15,5 +15,9 @@ RSpec.describe 'admin invoices show page', type: :feature do
 
   it 'displays invoice attributes' do
     visit admin_invoice_path(@invoice_1.id)
+    expect(page).to have_content("Invoice ##{@invoice_1.id}")
+    expect(page).to have_content("Status: #{@invoice_1.status}")
+    expect(page).to have_content("Created on: Sunday, March 25, 2012")
+    expect(page).to have_content("Customer: #{@invoice_1.customer_name}")
   end
 end
