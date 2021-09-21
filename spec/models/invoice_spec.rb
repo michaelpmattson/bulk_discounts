@@ -25,4 +25,20 @@ RSpec.describe Invoice, type: :model do
       expect(invoice.customer_name).to eq "John Doe"
     end
   end
+
+  describe '#total_revenue' do
+    it 'returns total revenue for an invoice' do
+      item_1 = create(:item)
+      item_2 = create(:item, name: "Hi-Chew")
+      invoice_1 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
+      transaction_1 = create(:transaction, result: 'success')
+      invoice_1.transactions << transaction_1
+      invoice_1_item_1 = create(:invoice_item, item: item_1, quantity: 3, unit_price: 7, status: 1)
+      invoice_1_item_2 = create(:invoice_item, item: item_2, quantity: 2, unit_price: 6, status: 2)
+      invoice_1.invoice_items << invoice_1_item_1
+      invoice_1.invoice_items << invoice_1_item_2
+
+      expect(invoice_1.total_revenue).to eq(33)
+    end
+  end
 end
