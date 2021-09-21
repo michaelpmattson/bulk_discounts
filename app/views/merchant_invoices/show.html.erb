@@ -13,7 +13,7 @@
     <th>Unit Price</th>
     <th>Status</th>
   </tr>
-  <% @invoice.invoice_items.each do |i_i| %>
+  <% @invoice_items.each do |i_i| %>
     <tr id="items-<%= i_i.item_id %>">
       <th><%= i_i.item.name %></th>
       <th><%= i_i.quantity %></th>
