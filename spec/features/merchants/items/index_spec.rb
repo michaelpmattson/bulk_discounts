@@ -212,7 +212,6 @@ RSpec.describe 'Merchant Items Index page' do
         expect(page).to have_content(expectation)
         expect(page).to_not have_content(unexpected)
       end
-      save_and_open_page
     end
   end
 end
