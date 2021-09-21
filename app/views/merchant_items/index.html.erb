@@ -23,6 +23,8 @@
 <ol id='top-items'>
   <h3>Top Items</h3>
   <% @merchant.top_items.each do |item| %>
-    <li><%= link_to item.name, merchant_item_path(@merchant.id, item.id) %> - $<%= item.total %> in sales</li>
+    <li id="top-items-<%= item.id %>"><%= link_to item.name, merchant_item_path(@merchant.id, item.id) %> - $<%= item.total %> in sales<br>
+      Top day for <%= item.name %> was <%= item.best_day.strftime("%m/%d/%y") %>
+    </li>
   <% end %>
 </ol>
