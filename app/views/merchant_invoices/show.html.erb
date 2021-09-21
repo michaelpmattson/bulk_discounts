@@ -3,6 +3,11 @@
 <p>Invoice Created: <%= @invoice.formatted_date %></p>
 <p>Customer: <%= @invoice.customer_name %></p>
 
-
+<% @invoice_items.each do |ii| %>
+<p>Item Name: <%= ii.item.name %></p>
+<p>Item Quantity: <%= ii.quantity %></p>
+<p>Item Price: <%= ii.unit_price %></p>
+<p>Item Status: <%= ii.status %></p>
+<% end %>
 
 
