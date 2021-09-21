@@ -70,4 +70,21 @@ RSpec.describe 'admin invoices show page', type: :feature do
       expect(page).to_not have_content(@item_5.name)
     end
   end
+
+  it 'displays total revenue for invoice' do
+    visit admin_invoice_path(@invoice_1.id)
+    expect(page).to have_content("$#{@invoice_1.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_2.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_3.total_revenue}")
+
+    visit admin_invoice_path(@invoice_2.id)
+    expect(page).to have_content("$#{@invoice_2.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_3.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_1.total_revenue}")
+
+    visit admin_invoice_path(@invoice_3.id)
+    expect(page).to have_content("$#{@invoice_3.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_2.total_revenue}")
+    expect(page).to_not have_content("$#{@invoice_1.total_revenue}")
+  end
 end
