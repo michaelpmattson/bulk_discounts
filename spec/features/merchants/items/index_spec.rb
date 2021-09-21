@@ -112,15 +112,21 @@ RSpec.describe 'Merchant Items Index page' do
       @item_8 = create(:item, merchant_id: @merchant_1.id, name: 'pie')
       @item_9 = create(:item, merchant_id: @merchant_1.id, name: 'carrots')
 
-      @inv_11 = create(:invoice)
-      @inv_12 = create(:invoice)
-      @inv_13 = create(:invoice)
-      @inv_14 = create(:invoice)
-      @inv_15 = create(:invoice)
-      @inv_16 = create(:invoice)
-      @inv_17 = create(:invoice)
-      @inv_18 = create(:invoice)
-      @inv_19 = create(:invoice)
+      @inv_11 = create(:invoice, created_at: "2012-03-25 09:54:09 UTC") #1
+      @inv_12 = create(:invoice, created_at: "2012-03-12 05:54:09 UTC") #2
+      @inv_13 = create(:invoice, created_at: "2012-03-10 00:54:09 UTC") #3
+      @inv_14 = create(:invoice, created_at: "2012-03-24 15:54:10 UTC") #4
+      @inv_15 = create(:invoice, created_at: "2012-03-07 19:54:10 UTC") #5
+      @inv_16 = create(:invoice, created_at: "2012-03-09 01:54:10 UTC") #6
+      @inv_17 = create(:invoice) #7
+      @inv_18 = create(:invoice) #8
+      @inv_19 = create(:invoice) #9
+      @inv_20 = create(:invoice, created_at: "2012-03-07 21:54:10 UTC") #1
+      @inv_21 = create(:invoice, created_at: "2012-03-13 16:54:10 UTC") #2
+      @inv_22 = create(:invoice, created_at: "2012-03-16 13:54:11 UTC") #3
+      @inv_23 = create(:invoice, created_at: "2012-03-06 21:54:10 UTC") #4
+      @inv_24 = create(:invoice, created_at: "2012-03-07 12:54:10 UTC") #5
+      @inv_25 = create(:invoice, created_at: "2012-03-27 07:54:11 UTC") #6
 
       @ii_11 = create(:invoice_item, item_id: @item_1.id, invoice_id: @inv_11.id) #12345
       @ii_12 = create(:invoice_item, item_id: @item_2.id, invoice_id: @inv_12.id, unit_price: 22345)
@@ -131,6 +137,12 @@ RSpec.describe 'Merchant Items Index page' do
       @ii_17 = create(:invoice_item, item_id: @item_7.id, invoice_id: @inv_17.id, unit_price: 72345)
       @ii_18 = create(:invoice_item, item_id: @item_8.id, invoice_id: @inv_18.id, unit_price: 82345)
       @ii_19 = create(:invoice_item, item_id: @item_9.id, invoice_id: @inv_19.id, unit_price: 62345)
+      @ii_20 = create(:invoice_item, item_id: @item_1.id, invoice_id: @inv_20.id, quantity: 20) #12345
+      @ii_21 = create(:invoice_item, item_id: @item_2.id, invoice_id: @inv_21.id, unit_price: 22345, quantity: 20)
+      @ii_22 = create(:invoice_item, item_id: @item_3.id, invoice_id: @inv_22.id, unit_price: 32345, quantity: 20)
+      @ii_23 = create(:invoice_item, item_id: @item_4.id, invoice_id: @inv_23.id, unit_price: 52345, quantity: 20)
+      @ii_24 = create(:invoice_item, item_id: @item_5.id, invoice_id: @inv_24.id, unit_price: 92345, quantity: 20)
+      @ii_25 = create(:invoice_item, item_id: @item_6.id, invoice_id: @inv_25.id, unit_price: 42345, quantity: 20)
 
       @tr_11 = create(:transaction, result: 'success', invoice_id: @inv_11.id)
       @tr_12 = create(:transaction, result: 'success', invoice_id: @inv_12.id)
@@ -138,6 +150,12 @@ RSpec.describe 'Merchant Items Index page' do
       @tr_14 = create(:transaction, result: 'success', invoice_id: @inv_14.id)
       @tr_15 = create(:transaction, result: 'success', invoice_id: @inv_15.id)
       @tr_16 = create(:transaction, result: 'success', invoice_id: @inv_16.id)
+      @tr_20 = create(:transaction, result: 'success', invoice_id: @inv_20.id)
+      @tr_21 = create(:transaction, result: 'success', invoice_id: @inv_21.id)
+      @tr_22 = create(:transaction, result: 'success', invoice_id: @inv_22.id)
+      @tr_23 = create(:transaction, result: 'success', invoice_id: @inv_23.id)
+      @tr_24 = create(:transaction, result: 'success', invoice_id: @inv_24.id)
+      @tr_25 = create(:transaction, result: 'success', invoice_id: @inv_25.id)
 
       @tr_17 = create(:transaction, invoice_id: @inv_17.id) #failed
       @tr_18 = create(:transaction, invoice_id: @inv_18.id) #failed
@@ -176,8 +194,23 @@ RSpec.describe 'Merchant Items Index page' do
 
     it 'shows total revenue next to each item' do
       within '#top-items' do
-        expectation = @ii_12.unit_price * @ii_12.quantity
+        expectation = (@ii_12.unit_price * @ii_12.quantity) + (@ii_21.unit_price * @ii_21.quantity)
         expect(page).to have_content(expectation)
+      end
+    end
+
+    it 'has best day for top items' do
+      within "#top-items-#{@item_6.id}" do
+        expectation = @item_6.best_day.strftime("%m/%d/%y")
+        unexpected = @item_4.best_day.strftime("%m/%d/%y")
+        expect(page).to have_content(expectation)
+        expect(page).to_not have_content(unexpected)
+      end
+      within "#top-items-#{@item_5.id}" do
+        expectation = @item_5.best_day.strftime("%m/%d/%y")
+        unexpected = @item_4.best_day.strftime("%m/%d/%y")
+        expect(page).to have_content(expectation)
+        expect(page).to_not have_content(unexpected)
       end
     end
   end
