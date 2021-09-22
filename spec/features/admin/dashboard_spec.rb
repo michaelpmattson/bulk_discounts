@@ -71,7 +71,7 @@ RSpec.describe 'Admin Dashboard page' do
 
     visit '/admin'
   end
-  
+
   context 'when i visit my admin dashboard' do
     it 'has a header that says admin dashboard' do
       expect(page).to have_content('Admin Dashboard')
@@ -147,8 +147,8 @@ RSpec.describe 'Admin Dashboard page' do
 
     it 'orders by created at' do
       within('#incomplete-invoices') do
-        expect("##{@invoice_4.id}").to appear_before("##{@invoice_3.id}")
-        expect("##{@invoice_3.id}").to appear_before("##{@invoice_1.id}")
+        expect("##{@invoice_1.id}").to appear_before("##{@invoice_3.id}")
+        expect("##{@invoice_3.id}").to appear_before("##{@invoice_4.id}")
       end
     end
   end
