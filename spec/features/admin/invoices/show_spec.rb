@@ -9,7 +9,7 @@ RSpec.describe 'admin invoices show page', type: :feature do
     @item_5 = create(:item, name: "pens")
     @item_6 = create(:item, name: "vinyl record")
 
-    @invoice_1 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
+    @invoice_1 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC', status: 1) # Sunday, March 25,2012
     @transaction_1 = create(:transaction, result: 'success')
     @invoice_1.transactions << @transaction_1
     @invoice_1_item_1 = create(:invoice_item, item: @item_1, quantity: 3, unit_price: 7, status: 1)
@@ -39,9 +39,17 @@ RSpec.describe 'admin invoices show page', type: :feature do
   it 'displays invoice attributes' do
     visit admin_invoice_path(@invoice_1.id)
     expect(page).to have_content("Invoice ##{@invoice_1.id}")
-    expect(page).to have_content("Status: #{@invoice_1.status}")
     expect(page).to have_content("Created on: Sunday, March 25, 2012")
     expect(page).to have_content("Customer: #{@invoice_1.customer_name}")
+  end
+
+  it 'displays status and updates in drop down form' do
+    visit admin_invoice_path(@invoice_1.id)
+    expect(page).to have_field("invoice[status]", with: @invoice_1.status)
+    select "completed", :from => 'invoice[status]'
+    click_on "Update Invoice"
+    expect(current_path).to eq(admin_invoice_path(@invoice_1.id))
+    expect(page).to have_field('invoice[status]', with: 'completed')
   end
 
   it 'displays invoice items' do

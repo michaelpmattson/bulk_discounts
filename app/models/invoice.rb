@@ -1,5 +1,5 @@
 class Invoice < ApplicationRecord
-  enum status: [:packaged, :pending, :shipped, :unknown]
+  enum status: [:cancelled, 'in progress', :completed, :unknown]
 
   belongs_to :customer
   has_many   :transactions,  dependent: :destroy
