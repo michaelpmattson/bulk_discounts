@@ -47,29 +47,28 @@ RSpec.describe 'Merchant Invoice Show Page' do
   context 'total revenue' do
     before(:each) do
       @merchant_1 = create(:merchant)
+      @item_1     = create(:item, merchant: @merchant_1)
+      @item_2     = create(:item, merchant: @merchant_1)
+      @item_3     = create(:item, merchant: @merchant_1)
+      @item_4     = create(:item, merchant: @merchant_1)
+
       @merchant_2 = create(:merchant)
+      @item_5     = create(:item, merchant: @merchant_2)
+      @item_6     = create(:item, merchant: @merchant_2)
 
-      @item_1 = create(:item,                             merchant: @merchant_1)
-      @item_2 = create(:item, name: "Hi-Chew",            merchant: @merchant_1)
-      @item_3 = create(:item, name: "edible rhinestones", merchant: @merchant_1)
-      @item_4 = create(:item, name: "catnip",             merchant: @merchant_1)
-      @item_5 = create(:item, name: "pens",               merchant: @merchant_2)
-      @item_6 = create(:item, name: "vinyl record",       merchant: @merchant_2)
+      @invoice_1  = create(:invoice)
+      @ii11       = create(:invoice_item, invoice: @invoice_1, item: @item_1, quantity: 1, unit_price: 10)
+      @ii12       = create(:invoice_item, invoice: @invoice_1, item: @item_2, quantity: 2, unit_price: 6)
+      @ii13       = create(:invoice_item, invoice: @invoice_1, item: @item_3, quantity: 3, unit_price: 5)
 
-      @invoice_1 = create(:invoice)
-      @invoice_2 = create(:invoice)
+      @invoice_2  = create(:invoice)
+      @ii24       = create(:invoice_item, invoice: @invoice_2, item: @item_4, quantity: 1, unit_price: 10)
+      @ii26       = create(:invoice_item, invoice: @invoice_2, item: @item_5, quantity: 2, unit_price: 6)
+      @ii26       = create(:invoice_item, invoice: @invoice_2, item: @item_6, quantity: 3, unit_price: 5)
 
-      @ii11 = create(:invoice_item, invoice: @invoice_1, item: @item_1, quantity: 1, unit_price: 10)
-      @ii12 = create(:invoice_item, invoice: @invoice_1, item: @item_2, quantity: 2, unit_price: 6)
-      @ii13 = create(:invoice_item, invoice: @invoice_1, item: @item_3, quantity: 3, unit_price: 5)
-
-      @ii24 = create(:invoice_item, invoice: @invoice_2, item: @item_4, quantity: 1, unit_price: 10)
-      @ii26 = create(:invoice_item, invoice: @invoice_2, item: @item_5, quantity: 2, unit_price: 6)
-      @ii26 = create(:invoice_item, invoice: @invoice_2, item: @item_6, quantity: 3, unit_price: 5)
-
-      @transaction_fail = create(:transaction, invoice: @invoice_1)
-      @transaction_1    = create(:transaction, invoice: @invoice_1, result: 'success')
-      @transaction_2    = create(:transaction, invoice: @invoice_2, result: 'success')
+      @transaction_fail_1 = create(:transaction, invoice: @invoice_1)
+      @transaction_1      = create(:transaction, invoice: @invoice_1, result: 'success')
+      @transaction_2      = create(:transaction, invoice: @invoice_2, result: 'success')
     end
 
     it 'displays total revenue for invoice' do
