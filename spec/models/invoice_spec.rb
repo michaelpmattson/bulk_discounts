@@ -127,7 +127,7 @@ RSpec.describe Invoice, type: :model do
 
   describe '#incomplete' do
     it '#returns invoices with items not shipped' do
-      expect(Invoice.incomplete).to eq([@invoice_2, @invoice_1])
+      expect(Invoice.incomplete).to eq([@invoice_1, @invoice_2])
     end
   end
 

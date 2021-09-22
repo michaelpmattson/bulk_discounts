@@ -34,7 +34,7 @@ class Invoice < ApplicationRecord
     joins(:invoice_items)
     .where.not('invoice_items.status = ?', 2)
     .distinct
-    .order(created_at: :desc)
+    .order(:created_at)
   end
 
   def total_revenue_by_merchant_id(merchant_id)
