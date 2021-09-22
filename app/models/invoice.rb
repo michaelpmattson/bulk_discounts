@@ -25,4 +25,13 @@ class Invoice < ApplicationRecord
       0
     end
   end
+
+  def self.incomplete
+    joins(:invoice_items)
+    .where.not('invoice_items.status = ?', 2)
+    .distinct
+    # binding.pry
+  end
 end
+
+# .joins(:invoice_items).where.not('invoice_items.status = ?', 3)
