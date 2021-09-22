@@ -127,10 +127,10 @@ RSpec.describe Invoice, type: :model do
 
   describe '#incomplete' do
     it '#returns invoices with items not shipped' do
-      expect(Invoice.incomplete).to eq([@invoice_1, @invoice_2])
+      expect(Invoice.incomplete).to eq([@invoice_2, @invoice_1])
     end
   end
-  
+
   describe '#total_revenue_by_merchant_id(merchant_id)' do
     it 'returns total revenue for a paid invoice for a single merchant_id' do
       merchant_1 = create(:merchant)
