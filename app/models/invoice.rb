@@ -14,7 +14,15 @@ class Invoice < ApplicationRecord
     customer.full_name
   end
 
+  def paid?
+    transactions.where('result = ?', 'success').count > 0
+  end
+
   def total_revenue
-    invoice_items.sum("quantity * unit_price")
+    if paid?
+      invoice_items.sum("quantity * unit_price")
+    else
+      0
+    end
   end
 end
