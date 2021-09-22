@@ -56,18 +56,18 @@ RSpec.describe Invoice, type: :model do
 
   describe 'invoice_items_by_merchant_id(merchant_id)' do
     it 'gets items by merchant_id' do
-      merchant_1 = create(:merchant)
-      item_1 = create(:item, merchant: merchant_1)
-      item_2 = create(:item, merchant: merchant_1)
-      item_3 = create(:item, merchant: merchant_1)
+      merchant_1  = create(:merchant)
+      item_1      = create(:item, merchant: merchant_1)
+      item_2      = create(:item, merchant: merchant_1)
+      item_3      = create(:item, merchant: merchant_1)
 
-      merchant_2 = create(:merchant)
-      item_4 = create(:item, merchant: merchant_2)
-      item_5 = create(:item, merchant: merchant_2)
-      item_6 = create(:item, merchant: merchant_2)
+      merchant_2  = create(:merchant)
+      item_4      = create(:item, merchant: merchant_2)
+      item_5      = create(:item, merchant: merchant_2)
+      item_6      = create(:item, merchant: merchant_2)
 
-      invoice_1 = create(:invoice)
-      invoice_2 = create(:invoice)
+      invoice_1   = create(:invoice)
+      invoice_2   = create(:invoice)
 
       inv_item_11 = create(:invoice_item, item: item_1, invoice: invoice_1)
       inv_item_21 = create(:invoice_item, item: item_2, invoice: invoice_1)
@@ -136,28 +136,31 @@ RSpec.describe Invoice, type: :model do
       merchant_1 = create(:merchant)
       merchant_2 = create(:merchant)
 
-      item_1 = create(:item,                      merchant: merchant_1)
-      item_2 = create(:item, name: "Hi-Chew",     merchant: merchant_1)
-      item_3 = create(:item, name: "Higher-Chew", merchant: merchant_2)
-      invoice_1 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
-      transaction_1 = create(:transaction, result: 'success')
-      invoice_1.transactions << transaction_1
-      invoice_1_item_1 = create(:invoice_item, item: item_1, quantity: 3, unit_price: 7, status: 1)
-      invoice_1_item_2 = create(:invoice_item, item: item_2, quantity: 2, unit_price: 6, status: 2)
-      invoice_1_item_3 = create(:invoice_item, item: item_3, quantity: 2, unit_price: 6, status: 2)
-      invoice_1.invoice_items << invoice_1_item_1
-      invoice_1.invoice_items << invoice_1_item_2
-      invoice_1.invoice_items << invoice_1_item_3
+      item_1 = create(:item, merchant: merchant_1)
+      item_2 = create(:item, merchant: merchant_1)
+      item_3 = create(:item, merchant: merchant_2)
 
-      invoice_2 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
-      transaction_2 = create(:transaction) # failed
-      invoice_1.transactions << transaction_1
-      invoice_2_item_1 = create(:invoice_item, item: item_1, quantity: 3, unit_price: 7, status: 1)
-      invoice_2_item_2 = create(:invoice_item, item: item_2, quantity: 2, unit_price: 6, status: 2)
-      invoice_2.invoice_items << invoice_2_item_1
-      invoice_2.invoice_items << invoice_2_item_2
+      # 1 failure 1 success
+      invoice_1 = create(:invoice)
+      transaction_0 = create(:transaction, invoice: invoice_1)
+      transaction_1 = create(:transaction, result: 'success', invoice: invoice_1)
+
+      invoice_1_item_1 = create(:invoice_item, invoice: invoice_1, item: item_1, quantity: 3, unit_price: 7)
+      invoice_1_item_2 = create(:invoice_item, invoice: invoice_1, item: item_2, quantity: 2, unit_price: 6)
+      # merchant 2s item
+      invoice_1_item_3 = create(:invoice_item, invoice: invoice_1, item: item_3, quantity: 2, unit_price: 6)
+
+      # Only failure
+      invoice_2 = create(:invoice)
+      transaction_2 = create(:transaction, invoice: invoice_2)
+
+      invoice_2_item_1 = create(:invoice_item, invoice: invoice_2, item: item_1, quantity: 3, unit_price: 7)
+      invoice_2_item_2 = create(:invoice_item, invoice: invoice_2, item: item_2, quantity: 2, unit_price: 6)
+
 
       expect(invoice_1.total_revenue_by_merchant_id(merchant_1.id)).to eq(33)
+
+      # no successful transactions
       expect(invoice_2.total_revenue_by_merchant_id(merchant_1.id)).to eq(0)
     end
   end
