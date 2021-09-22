@@ -74,18 +74,12 @@ RSpec.describe 'Merchant Invoice Show Page' do
 
     it 'displays total revenue for invoice' do
       visit merchant_invoice_path(@merchant_1, @invoice_1.id)
-      save_and_open_page
       expect(page).to have_content("Total Revenue: $37.00")
     end
 
     it 'does not add revenue for other merchants' do
       visit merchant_invoice_path(@merchant_1, @invoice_2.id)
-      save_and_open_page
       expect(page).to have_content("Total Revenue: $10.00")
     end
   end
 end
-
-
-# When I visit my merchant invoice show page
-# Then I see the total revenue that will be generated from all of my items on the invoice

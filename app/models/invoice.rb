@@ -1,5 +1,5 @@
 class Invoice < ApplicationRecord
-  enum status: [:packaged, :pending, :shipped, :unknown]
+  enum status: [:cancelled, 'in progress', :completed, :unknown]
 
   belongs_to :customer
   has_many   :transactions,  dependent: :destroy
@@ -22,7 +22,15 @@ class Invoice < ApplicationRecord
     items_by_merchant_id(merchant_id).sum("invoice_items.quantity * invoice_items.unit_price")
   end
 
+  def paid?
+    transactions.where('result = ?', 'success').count > 0
+  end
+
   def total_revenue
-    invoice_items.sum("quantity * unit_price")
+    if paid?
+      invoice_items.sum("quantity * unit_price")
+    else
+      0
+    end
   end
 end
