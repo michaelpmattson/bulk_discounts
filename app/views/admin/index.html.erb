@@ -2,6 +2,14 @@
 <%= link_to 'Merchants', admin_merchants_path %>
 <%= link_to 'Invoices', admin_invoices_path %>
 
+<section id='incomplete-invoices'>
+  <h3>Incomplete Invoices</h3>
+  <ul>
+    <% @incomplete_invoices.each do |inc_inv| %>
+    <li id='incomplete-<%= inc_inv.id %>'><%= link_to "##{inc_inv.id}", admin_invoice_path(inc_inv.id) %> - <%= inc_inv.created_at.strftime("%A, %B %d, %Y") %></li>
+    <% end %>
+  </ul>
+</section>
 <section id='top-customers'>
   <h3>Top Customers</h3>
   <ol>
@@ -9,12 +17,4 @@
       <li id="customer-<%= customer.id %>"><%= customer.full_name %> - <%= customer.t_count %> purchases</li>
     <% end %>
   </ol>
-</section>
-<section id='incomplete-invoices'>
-  <h3>Incomplete Invoices</h3>
-  <ul>
-    <% @incomplete_invoices.each do |inc_inv| %>
-      <li id='incomplete-<%= inc_inv.id %>'><%= link_to "##{inc_inv.id}", admin_invoice_path(inc_inv.id) %></li>
-    <% end %>
-  </ul>
 </section>
