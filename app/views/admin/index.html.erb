@@ -18,3 +18,11 @@
     <% end %>
   </ol>
 </section>
+<section id='incomplete-invoices'>
+  <h3>Incomplete Invoices</h3>
+  <ul>
+    <% @incomplete_invoices.each do |inc_inv| %>
+      <li id='incomplete-<%= inc_inv.id %>'><%= link_to "##{inc_inv.id}", admin_invoice_path(inc_inv.id) %></li>
+    <% end %>
+  </ul>
+</section>

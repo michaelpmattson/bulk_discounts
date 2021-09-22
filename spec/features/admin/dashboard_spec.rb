@@ -8,6 +8,7 @@ RSpec.describe 'Admin Dashboard page' do
     # 6 successful transactions, 1 failed
     @customer_1    = create(:customer)
     @invoice_1     = create(:invoice, customer_id: @customer_1.id, created_at: '2012-03-21 13:54:10 UTC') # Wednesday, March 21, 2012
+
     @invoice_item_1  = create(:invoice_item, item_id: @item.id, invoice_id: @invoice_1.id, status: 1)
     @transaction_1 = create(:transaction, invoice_id: @invoice_1.id, result: 'success')
     @transaction_2 = create(:transaction, invoice_id: @invoice_1.id, result: 'success')
@@ -70,6 +71,7 @@ RSpec.describe 'Admin Dashboard page' do
 
     visit '/admin'
   end
+  
   context 'when i visit my admin dashboard' do
     it 'has a header that says admin dashboard' do
       expect(page).to have_content('Admin Dashboard')

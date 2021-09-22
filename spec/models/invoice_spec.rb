@@ -42,6 +42,7 @@ RSpec.describe Invoice, type: :model do
     @invoice_5.transactions << @transaction_6
     @invoice_5.invoice_items << @invoice_5_item_1
   end
+
   describe 'relationships' do
     it { should belong_to(:customer) }
     it { should have_many(:transactions).dependent(:destroy) }
@@ -109,12 +110,27 @@ RSpec.describe Invoice, type: :model do
     end
   end
 
-  describe '#incomplete' do
-    it '#returns invoices with items not shipped ordered by created at' do
-      expect(Invoice.incomplete).to eq([@invoice_2, @invoice_1])
+  describe '#total_revenue' do
+    it 'returns total revenue for a paid invoice' do
+      expect(@invoice_1.total_revenue).to eq(33)
+      expect(@invoice_2.total_revenue).to eq(0)
     end
   end
 
+  describe '#paid?' do
+    it '#identifies invoices with successful transactions' do
+      expect(@invoice_1.paid?).to eq(true)
+      expect(@invoice_2.paid?).to eq(false)
+      expect(@invoice_3.paid?).to eq(true)
+    end
+  end
+
+  describe '#incomplete' do
+    it '#returns invoices with items not shipped' do
+      expect(Invoice.incomplete).to eq([@invoice_1, @invoice_2])
+    end
+  end
+  
   describe '#total_revenue_by_merchant_id(merchant_id)' do
     it 'returns total revenue for a paid invoice for a single merchant_id' do
       merchant_1 = create(:merchant)
