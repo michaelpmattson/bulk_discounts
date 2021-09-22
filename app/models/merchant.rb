@@ -54,12 +54,11 @@ class Merchant < ApplicationRecord
     .order(revenue: :desc)
     .limit(5)
   end
-
-  def invoice_items_by_invoice(invoice)
-    ii = invoice_items.where("invoice_id = ?", invoice.id)
-  end
 end
 
+# def invoice_items_by_invoice(invoice)
+#   ii = invoice_items.where("invoice_id = ?", invoice.id)
+# end
 
 # def disabled?
 #   status == 'Disabled'

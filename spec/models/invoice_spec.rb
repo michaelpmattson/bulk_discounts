@@ -52,6 +52,36 @@ RSpec.describe Invoice, type: :model do
   describe 'enums' do
     it { should define_enum_for(:status) }
   end
+
+  describe 'invoice_items_by_merchant_id(merchant_id)' do
+    it 'gets items by merchant_id' do
+      merchant_1 = create(:merchant)
+      item_1 = create(:item, merchant: merchant_1)
+      item_2 = create(:item, merchant: merchant_1)
+      item_3 = create(:item, merchant: merchant_1)
+
+      merchant_2 = create(:merchant)
+      item_4 = create(:item, merchant: merchant_2)
+      item_5 = create(:item, merchant: merchant_2)
+      item_6 = create(:item, merchant: merchant_2)
+
+      invoice_1 = create(:invoice)
+      invoice_2 = create(:invoice)
+
+      inv_item_11 = create(:invoice_item, item: item_1, invoice: invoice_1)
+      inv_item_21 = create(:invoice_item, item: item_2, invoice: invoice_1)
+      inv_item_31 = create(:invoice_item, item: item_4, invoice: invoice_1)
+
+      inv_item_32 = create(:invoice_item, item: item_3, invoice: invoice_2)
+      inv_item_52 = create(:invoice_item, item: item_5, invoice: invoice_2)
+      inv_item_62 = create(:invoice_item, item: item_6, invoice: invoice_2)
+      inv_item_12 = create(:invoice_item, item: item_1, invoice: invoice_2)
+
+      expect(invoice_1.invoice_items_by_merchant_id(merchant_1.id)).to eq([inv_item_11, inv_item_21])
+      expect(invoice_2.invoice_items_by_merchant_id(merchant_2.id)).to eq([inv_item_52, inv_item_62])
+    end
+  end
+
   describe '#formatted_date' do
     it 'returns the date with weekday, month, date, year' do
       expect(@invoice_4.formatted_date).to eq("Sunday, September 19, 2021")
@@ -61,6 +91,26 @@ RSpec.describe Invoice, type: :model do
   describe '#customer_name' do
     it 'returns a customers full name' do
       expect(@invoice_5.customer_name).to eq "John Doe"
+    end
+  end
+
+  describe '#paid?' do
+    it '#identifies invoices with successful transactions' do
+      invoice_1 = create(:invoice)
+      transaction_1 = create(:transaction, result: 'success')
+      invoice_1.transactions << transaction_1
+      invoice_2 = create(:invoice)
+      transaction_2 = create(:transaction)
+      invoice_2.transactions << transaction_2
+      invoice_3 = create(:invoice)
+      transaction_3 = create(:transaction)
+      transaction_4 = create(:transaction, result: 'success')
+      invoice_3.transactions << transaction_3
+      invoice_3.transactions << transaction_4
+
+      expect(invoice_1.paid?).to eq(true)
+      expect(invoice_2.paid?).to eq(false)
+      expect(invoice_3.paid?).to eq(true)
     end
   end
 
@@ -82,6 +132,37 @@ RSpec.describe Invoice, type: :model do
   describe '#incomplete' do
     it '#returns invoices with items not shipped' do
       expect(Invoice.incomplete).to eq([@invoice_1, @invoice_2])
+    end
+  end
+  
+  describe '#total_revenue_by_merchant_id(merchant_id)' do
+    it 'returns total revenue for a paid invoice for a single merchant_id' do
+      merchant_1 = create(:merchant)
+      merchant_2 = create(:merchant)
+
+      item_1 = create(:item,                      merchant: merchant_1)
+      item_2 = create(:item, name: "Hi-Chew",     merchant: merchant_1)
+      item_3 = create(:item, name: "Higher-Chew", merchant: merchant_2)
+      invoice_1 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
+      transaction_1 = create(:transaction, result: 'success')
+      invoice_1.transactions << transaction_1
+      invoice_1_item_1 = create(:invoice_item, item: item_1, quantity: 3, unit_price: 7, status: 1)
+      invoice_1_item_2 = create(:invoice_item, item: item_2, quantity: 2, unit_price: 6, status: 2)
+      invoice_1_item_3 = create(:invoice_item, item: item_3, quantity: 2, unit_price: 6, status: 2)
+      invoice_1.invoice_items << invoice_1_item_1
+      invoice_1.invoice_items << invoice_1_item_2
+      invoice_1.invoice_items << invoice_1_item_3
+
+      invoice_2 = create(:invoice, created_at: '2012-03-25 09:54:09 UTC') # Sunday, March 25,2012
+      transaction_2 = create(:transaction) # failed
+      invoice_1.transactions << transaction_1
+      invoice_2_item_1 = create(:invoice_item, item: item_1, quantity: 3, unit_price: 7, status: 1)
+      invoice_2_item_2 = create(:invoice_item, item: item_2, quantity: 2, unit_price: 6, status: 2)
+      invoice_2.invoice_items << invoice_2_item_1
+      invoice_2.invoice_items << invoice_2_item_2
+
+      expect(invoice_1.total_revenue_by_merchant_id(merchant_1.id)).to eq(33)
+      expect(invoice_2.total_revenue_by_merchant_id(merchant_1.id)).to eq(0)
     end
   end
 end
