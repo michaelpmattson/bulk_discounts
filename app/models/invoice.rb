@@ -6,12 +6,20 @@ class Invoice < ApplicationRecord
   has_many   :invoice_items, dependent: :destroy
   has_many   :items, through: :invoice_items
 
+  def items_by_merchant_id(merchant_id)
+    invoice_items.joins(:item).where(items: {merchant_id: merchant_id})
+  end
+
   def formatted_date
     created_at.strftime("%A, %B %d, %Y")
   end
 
   def customer_name
     customer.full_name
+  end
+
+  def total_revenue_by_merchant_id(merchant_id)
+    items_by_merchant_id(merchant_id).sum("invoice_items.quantity * invoice_items.unit_price")
   end
 
   def total_revenue
