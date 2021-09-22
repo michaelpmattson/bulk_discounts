@@ -6,7 +6,7 @@ class Invoice < ApplicationRecord
   has_many   :invoice_items, dependent: :destroy
   has_many   :items, through: :invoice_items
 
-  def items_by_merchant_id(merchant_id)
+  def invoice_items_by_merchant_id(merchant_id)
     invoice_items.joins(:item).where(items: {merchant_id: merchant_id})
   end
 
@@ -18,10 +18,6 @@ class Invoice < ApplicationRecord
     customer.full_name
   end
 
-  def total_revenue_by_merchant_id(merchant_id)
-    items_by_merchant_id(merchant_id).sum("invoice_items.quantity * invoice_items.unit_price")
-  end
-
   def paid?
     transactions.where('result = ?', 'success').count > 0
   end
@@ -29,6 +25,14 @@ class Invoice < ApplicationRecord
   def total_revenue
     if paid?
       invoice_items.sum("quantity * unit_price")
+    else
+      0
+    end
+  end
+
+  def total_revenue_by_merchant_id(merchant_id)
+    if paid?
+      invoice_items_by_merchant_id(merchant_id).sum("invoice_items.quantity * invoice_items.unit_price")
     else
       0
     end
