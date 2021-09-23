@@ -32,7 +32,9 @@ Rails version: 5.2.6
 * Run your development server with `rails s` to see the app in action.
 
 
-* Or view on [Heroku]: https://rocky-escarpment-73509.herokuapp.com
+* Or view on [Heroku]
+
+[Heroku]: https://rocky-escarpment-73509.herokuapp.com
 
 
 ## Phases
