@@ -33,7 +33,9 @@ Rails version: 5.2.6
 
 
 * Or view on Heroku:
+
 [Admin Dashboard](https://rocky-escarpment-73509.herokuapp.com/admin)
+
 [Example Merchant Dashboard](https://rocky-escarpment-73509.herokuapp.com/merchants/1/dashboard)
 
 
