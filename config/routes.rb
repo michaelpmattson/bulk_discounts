@@ -4,12 +4,14 @@ Rails.application.routes.draw do
   resources :merchants, only: [] do
     get  '/dashboard', to: 'merchants#show'
 
-    get  '/items',     to: 'merchant_items#index'
-    post '/items',     to: 'merchant_items#create'
-    resources :items, only: [:new, :show, :edit, :update]
-
     get  '/invoices',     to: 'merchant_invoices#index'
     get  '/invoices/:id', to: 'merchant_invoices#show', as: 'invoice'
+
+    get  '/items',     to: 'merchant_items#index'
+    post '/items',     to: 'merchant_items#create'
+
+    resources :bulk_discounts, only: [:index]
+    resources :items,     only: [:new, :show, :edit, :update]
   end
 
   resources :admin, only: [:index]
