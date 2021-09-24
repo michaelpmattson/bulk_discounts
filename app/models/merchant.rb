@@ -1,9 +1,11 @@
 class Merchant < ApplicationRecord
-  validates :name, presence: true
-  has_many :items,   dependent: :destroy
-  has_many :invoice_items, through: :items
-  has_many :invoices,  through: :items
-  has_many :customers, through: :invoices
+  validates :name,         presence: true
+
+  has_many  :items,       dependent: :destroy
+  has_many  :invoice_items, through: :items
+  has_many  :invoices,      through: :items
+  has_many  :customers,     through: :invoices
+  has_many  :bulk_discounts
 
   def favorite_customers
     customers.top_five_with_count
@@ -18,7 +20,9 @@ class Merchant < ApplicationRecord
   end
 
   def inv_items_ready
-    invoice_items.joins(:invoice).where(status: ['packaged', 'pending']).order('invoices.created_at')
+    invoice_items.joins(:invoice)
+                 .where(status: ['packaged', 'pending'])
+                 .order('invoices.created_at')
   end
 
   def top_items
@@ -55,11 +59,3 @@ class Merchant < ApplicationRecord
     .limit(5)
   end
 end
-
-# def invoice_items_by_invoice(invoice)
-#   ii = invoice_items.where("invoice_id = ?", invoice.id)
-# end
-
-# def disabled?
-#   status == 'Disabled'
-# end
