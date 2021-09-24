@@ -20,6 +20,11 @@ RSpec.describe 'Merchant Dashboard page' do
       click_link('My Invoices') # needs a flash "there are no invoices" if there are none
       expect(current_path).to eq("/merchants/#{@sprouts.id}/invoices")
     end
+
+    it 'has a link to my bulk discounts' do
+      click_link('My Discounts')
+      expect(current_path).to eq("/merchants/#{@sprouts.id}/bulk_discounts")
+    end
   end
 
   context 'top 5 customers' do
@@ -165,3 +170,12 @@ RSpec.describe 'Merchant Dashboard page' do
     end
   end
 end
+
+# As a merchant
+# When I visit my merchant dashboard
+# Then I see a link to view all my discounts
+# When I click this link
+# Then I am taken to my bulk discounts index page
+# Where I see all of my bulk discounts including their
+# percentage discount and quantity thresholds
+# And each bulk discount listed includes a link to its show page
