@@ -30,4 +30,18 @@ RSpec.describe 'the merchant bulk discounts index' do
 
     expect(page).to_not have_content(@bulk_discount_21.percentage)
   end
+
+  it 'has a link to create a new discount' do
+    click_link('Add New Discount')
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant_1))
+  end
 end
+
+# As a merchant
+# When I visit my bulk discounts index
+# Then I see a link to create a new discount
+# When I click this link
+# Then I am taken to a new page where I see a form to add a new bulk discount
+# When I fill in the form with valid data
+# Then I am redirected back to the bulk discount index
+# And I see my new bulk discount listed

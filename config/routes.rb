@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get  '/items',     to: 'merchant_items#index'
     post '/items',     to: 'merchant_items#create'
 
-    resources :bulk_discounts, only: [:index, :show]
+    resources :bulk_discounts, only: [:index, :new, :show]
     resources :items,     only: [:new, :show, :edit, :update]
   end
 
