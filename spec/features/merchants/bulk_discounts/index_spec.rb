@@ -13,7 +13,6 @@ RSpec.describe 'the merchant bulk discounts index' do
   end
 
   it 'shows all the bulk discounts for a merchant' do
-    save_and_open_page
     within "#discount-#{@bulk_discount_11.id}" do
       expect(page).to have_content(@bulk_discount_11.percentage)
       expect(page).to have_content(@bulk_discount_11.quantity_threshold)
