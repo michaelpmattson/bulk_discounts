@@ -17,6 +17,10 @@ class BulkDiscountsController < ApplicationController
     @discount = BulkDiscount.find(params[:id])
   end
 
+  def edit
+    
+  end
+
   def destroy
     discount = BulkDiscount.find(params[:id])
     discount.destroy
