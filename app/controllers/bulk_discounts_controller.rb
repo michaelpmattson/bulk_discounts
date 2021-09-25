@@ -33,8 +33,7 @@ class BulkDiscountsController < ApplicationController
     redirect_to merchant_bulk_discounts_path
   end
 
-  private
-
+private
   def discount_params
     params.permit(:merchant_id, :percentage, :quantity_threshold)
   end
