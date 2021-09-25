@@ -20,6 +20,11 @@ RSpec.describe 'Merchant Dashboard page' do
       click_link('My Invoices') # needs a flash "there are no invoices" if there are none
       expect(current_path).to eq("/merchants/#{@sprouts.id}/invoices")
     end
+
+    it 'has a link to my bulk discounts' do
+      click_link('My Discounts')
+      expect(current_path).to eq("/merchants/#{@sprouts.id}/bulk_discounts")
+    end
   end
 
   context 'top 5 customers' do
