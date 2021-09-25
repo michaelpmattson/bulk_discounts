@@ -44,6 +44,11 @@ class Invoice < ApplicationRecord
       0
     end
   end
-end
 
-# .joins(:invoice_items).where.not('invoice_items.status = ?', 3)
+  def discounts_applied_by_merchant(merchant)
+    wip = merchant.bulk_discounts
+    .joins(merchant: {invoices: :transactions})
+    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
+    .select('bulk_discounts.*, invoice_items.*')
+  end
+end

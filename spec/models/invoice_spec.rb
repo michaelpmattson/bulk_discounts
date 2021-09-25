@@ -164,4 +164,71 @@ RSpec.describe Invoice, type: :model do
       expect(invoice_2.total_revenue_by_merchant_id(merchant_1.id)).to eq(0)
     end
   end
+
+  describe 'bulk discounts' do
+    describe '#discounts_applied_by_merchant_id(merchant_id)' do
+      it 'does not return discount when threshold isnt met' do
+        merchant_a      = create(:merchant)
+        bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+        item_a          = create(:item, merchant: merchant_a)
+        item_b          = create(:item, merchant: merchant_a)
+        invoice_a       = create(:invoice)
+        invoice_item_a  = create(:invoice_item, item: item_a, invoice: invoice_a, quantity: 5)
+        invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 5)
+        transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+        expect(invoice_a.discounts_applied_by_merchant(merchant_a)).to eq([])
+      end
+
+      it 'returns discount with inv item that meets threshold' do
+        merchant_a      = create(:merchant)
+        bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+        item_a          = create(:item, merchant: merchant_a)
+        item_b          = create(:item, merchant: merchant_a)
+        invoice_a       = create(:invoice)
+        invoice_item_a  = create(:invoice_item, item: item_a, invoice: invoice_a, quantity: 10)
+        invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 5)
+        transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+        discount = invoice_a.discounts_applied_by_merchant(merchant_a).first
+        expect(discount.percentage).to eq(bulk_discount_a.percentage)
+        expect(discount.quantity_threshold).to eq(bulk_discount_a.quantity_threshold)
+        expect(discount.item_id).to eq(item_a.id)
+        expect(discount.id).to eq(invoice_item_a.id)
+        expect(discount.quantity).to eq(invoice_item_a.quantity)
+        expect(discount.unit_price).to eq(invoice_item_a.unit_price)
+      end
+    end
+  end
 end
+
+# Merchant A has two Bulk Discounts
+# Bulk Discount A is 20% off 10 items
+# Bulk Discount B is 30% off 15 items
+# Invoice A includes two of Merchant A’s items
+# Item A is ordered in a quantity of 12
+# Item B is ordered in a quantity of 15
+# In this example, Item A should discounted at 20% off, and Item B should discounted at 30% off.
+#
+# Example 4
+#
+# Merchant A has two Bulk Discounts
+# Bulk Discount A is 20% off 10 items
+# Bulk Discount B is 15% off 15 items
+# Invoice A includes two of Merchant A’s items
+# Item A is ordered in a quantity of 12
+# Item B is ordered in a quantity of 15
+# In this example, Both Item A and Item B should discounted at 20% off. Additionally, there is no scenario where Bulk Discount B can ever be applied.
+#
+# Example 5
+#
+# Merchant A has two Bulk Discounts
+# Bulk Discount A is 20% off 10 items
+# Bulk Discount B is 30% off 15 items
+# Merchant B has no Bulk Discounts
+# Invoice A includes two of Merchant A’s items
+# Item A1 is ordered in a quantity of 12
+# Item A2 is ordered in a quantity of 15
+# Invoice A also includes one of Merchant B’s items
+# Item B is ordered in a quantity of 15
+# In this example, Item A1 should discounted at 20% off, and Item A2 should discounted at 30% off. Item B should not be discounted.
