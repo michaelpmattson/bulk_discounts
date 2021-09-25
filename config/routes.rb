@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get  '/items',     to: 'merchant_items#index'
     post '/items',     to: 'merchant_items#create'
 
-    resources :bulk_discounts, except: [:edit, :update]
+    resources :bulk_discounts
     resources :items,     only: [:new, :show, :edit, :update]
   end
 
