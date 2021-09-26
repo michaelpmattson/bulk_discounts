@@ -45,13 +45,20 @@ class Invoice < ApplicationRecord
     end
   end
 
-  def discounts_applied_by_merchant(merchant)
+  def discounted_inv_items_by_merchant_id(merchant_id)
+    invoice_items.joins(item: {merchant: :bulk_discounts}, invoice: :transactions)
+     .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}, items: {merchant_id: merchant_id})
+     .group(:id)
+     .select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount')
+
     # wip = merchant.bulk_discounts
     # .joins(merchant: {invoices: :transactions})
-    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).select('bulk_discounts.*, invoice_items.*').distinct
-    wip = merchant.bulk_discounts
-    .joins(merchant: {invoices: :transactions})
-    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).group(:id).select('bulk_discounts.*, MAX(bulk_discounts.percentage)')
-    binding.pry
+    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
+    # .select('bulk_discounts.*, invoice_items.*')
+
+    # wip = merchant.bulk_discounts
+    # .joins(merchant: {invoices: :transactions})
+    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).group('invoice_items.id').select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount').order('invoice_items.id')
+    # binding.pry
   end
 end
