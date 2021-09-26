@@ -46,9 +46,12 @@ class Invoice < ApplicationRecord
   end
 
   def discounts_applied_by_merchant(merchant)
+    # wip = merchant.bulk_discounts
+    # .joins(merchant: {invoices: :transactions})
+    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).select('bulk_discounts.*, invoice_items.*').distinct
     wip = merchant.bulk_discounts
     .joins(merchant: {invoices: :transactions})
-    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
-    .select('bulk_discounts.*, invoice_items.*')
+    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).group(:id).select('bulk_discounts.*, MAX(bulk_discounts.percentage)')
+    binding.pry
   end
 end

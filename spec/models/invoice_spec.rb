@@ -198,17 +198,39 @@ RSpec.describe Invoice, type: :model do
         expect(discount.quantity).to eq(invoice_item_a.quantity)
         expect(discount.unit_price).to eq(invoice_item_a.unit_price)
       end
+
+      # Merchant A has two Bulk Discounts
+      # Bulk Discount A is 20% off 10 items
+      # Bulk Discount B is 30% off 15 items
+      # Invoice A includes two of Merchant A’s items
+      # Item A is ordered in a quantity of 12
+      # Item B is ordered in a quantity of 15
+      # In this example, Item A should discounted at 20% off, and Item B should discounted at 30% off.
+      it 'returns the greater discount when a higher threshold is met' do
+        merchant_a      = create(:merchant)
+        bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+        bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
+        item_a          = create(:item, merchant: merchant_a)
+        item_b          = create(:item, merchant: merchant_a)
+        invoice_a       = create(:invoice)
+        invoice_item_a  = create(:invoice_item, item: item_a, invoice: invoice_a, quantity: 12)
+        invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 15)
+        transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+        discounts = invoice_a.discounts_applied_by_merchant(merchant_a)
+        expect(discounts.length).to eq(2)
+        require "pry"; binding.pry
+        discount  = discounts.first
+        expect(discount.quantity_threshold).to eq(bulk_discount_a.quantity_threshold)
+        expect(discount.item_id).to eq(item_a.id)
+        expect(discount.id).to eq(invoice_item_a.id)
+        expect(discount.quantity).to eq(invoice_item_a.quantity)
+        expect(discount.unit_price).to eq(invoice_item_a.unit_price)
+      end
     end
   end
 end
 
-# Merchant A has two Bulk Discounts
-# Bulk Discount A is 20% off 10 items
-# Bulk Discount B is 30% off 15 items
-# Invoice A includes two of Merchant A’s items
-# Item A is ordered in a quantity of 12
-# Item B is ordered in a quantity of 15
-# In this example, Item A should discounted at 20% off, and Item B should discounted at 30% off.
 #
 # Example 4
 #
@@ -232,3 +254,15 @@ end
 # Invoice A also includes one of Merchant B’s items
 # Item B is ordered in a quantity of 15
 # In this example, Item A1 should discounted at 20% off, and Item A2 should discounted at 30% off. Item B should not be discounted.
+
+
+# SELECT bulk_discounts.*, MAX(percentage) AS max_percent, invoice_items.* FROM "bulk_discounts"
+#   INNER JOIN "merchants" ON "merchants"."id" = "bulk_discounts"."merchant_id"
+#   INNER JOIN "items" ON "items"."merchant_id" = "merchants"."id"
+#   INNER JOIN "invoice_items" ON "invoice_items"."item_id" = "items"."id"
+#   INNER JOIN "invoices" ON "invoices"."id" = "invoice_items"."invoice_id"
+#   INNER JOIN "transactions" ON "transactions"."invoice_id" = "invoices"."id"
+#     WHERE "bulk_discounts"."merchant_id" = $1
+#     AND (invoice_items.quantity >= bulk_discounts.quantity_threshold)
+#     GROUP BY "bulk_discounts"."id"
+#     ORDER BY "bulk_discounts"."id" ASC LIMIT $2
