@@ -81,4 +81,43 @@ RSpec.describe 'Merchant Invoice Show Page' do
       expect(page).to have_content("Total Revenue: $10.00")
     end
   end
+
+  context 'total and discounted revenue' do
+    before(:each) do
+      @merchant_1 = create(:merchant)
+      @item_1     = create(:item, merchant: @merchant_1)
+      @item_2     = create(:item, merchant: @merchant_1)
+      @item_3     = create(:item, merchant: @merchant_1)
+      @item_4     = create(:item, merchant: @merchant_1)
+
+      @discount_1 = create(:bulk_discount, merchant: @merchant_1, percentage: 10, quantity_threshold: 2)
+
+      @merchant_2 = create(:merchant)
+      @item_5     = create(:item, merchant: @merchant_2)
+      @item_6     = create(:item, merchant: @merchant_2)
+
+      @invoice_1  = create(:invoice)
+      @ii11       = create(:invoice_item, invoice: @invoice_1, item: @item_1, quantity: 1, unit_price: 10)
+      @ii12       = create(:invoice_item, invoice: @invoice_1, item: @item_2, quantity: 2, unit_price: 6)
+      @ii13       = create(:invoice_item, invoice: @invoice_1, item: @item_3, quantity: 3, unit_price: 5)
+
+      @invoice_2  = create(:invoice)
+      @ii24       = create(:invoice_item, invoice: @invoice_2, item: @item_4, quantity: 1, unit_price: 10)
+      @ii26       = create(:invoice_item, invoice: @invoice_2, item: @item_5, quantity: 2, unit_price: 6)
+      @ii26       = create(:invoice_item, invoice: @invoice_2, item: @item_6, quantity: 3, unit_price: 5)
+
+      @transaction_1      = create(:transaction, invoice: @invoice_1, result: 'success')
+      @transaction_2      = create(:transaction, invoice: @invoice_2, result: 'success')
+    end
+
+    it 'displays total revenue for invoice' do
+      visit merchant_invoice_path(@merchant_1, @invoice_1.id)
+      expect(page).to have_content("Total Revenue: $37.00")
+    end
+
+    it 'displays total discounted revenue' do
+      visit merchant_invoice_path(@merchant_1, @invoice_1.id)
+      expect(page).to have_content("Total Discounted Revenue: $34.30")
+    end
+  end
 end
