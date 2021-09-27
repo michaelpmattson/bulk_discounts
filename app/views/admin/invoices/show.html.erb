@@ -1,13 +1,10 @@
 <h2>Invoice #<%= @invoice.id %></h2>
-<p><%= form_with model: [:admin, @invoice], method: :patch, local: true do |f| %>
-              <%= f.label :status %>
-              <%= f.select :status, ["completed", "cancelled", "in progress"] %>
-              <%= f.submit %>
-            <% end %>
-</p>
 <p>Created on: <%= @invoice.created_at.strftime("%A, %B %d, %Y") %></p>
 <p>Total Revenue: <%= number_to_currency(@invoice.total_revenue) %></p>
+<p>Total Discounted Revenue: <%= number_to_currency(@invoice.discounted_revenue(@invoice.total_revenue)) %></p>
 <p>Customer: <%= @invoice.customer_name %></p>
+
+
 <h3>Items on this invoice:</h3>
 <table id='items'>
   <tr>
@@ -25,3 +22,10 @@
     </tr>
   <% end %>
 </table>
+
+<p><%= form_with model: [:admin, @invoice], method: :patch, local: true do |f| %>
+  <%= f.label :status %>
+  <%= f.select :status, ["completed", "cancelled", "in progress"] %>
+  <%= f.submit %>
+  <% end %>
+</p>

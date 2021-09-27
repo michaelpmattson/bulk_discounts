@@ -122,7 +122,6 @@ RSpec.describe 'Merchant Invoice Show Page' do
 
     it 'has a link for each discount applied' do
       visit merchant_invoice_path(@merchant_1, @invoice_1.id)
-      save_and_open_page
       within "#item-#{@item_2.id}" do
         click_link('View Discount')
       end
