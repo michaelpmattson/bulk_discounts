@@ -62,14 +62,32 @@ class Invoice < ApplicationRecord
     # binding.pry
   end
 
-  def total_discount(merchant_id)
+  def total_discount_by_merchant_id(merchant_id)
     inv_items = discounted_inv_items_by_merchant_id(merchant_id)
     total = inv_items.sum do |ii|
       ii.quantity * ii.unit_price * ii.max_discount / 100.to_f
     end
   end
 
-  def discounted_revenue(revenue, merchant_id)
-    revenue - total_discount(merchant_id)
+  def discounted_revenue_by_merchant_id(revenue, merchant_id)
+    revenue - total_discount_by_merchant_id(merchant_id)
+  end
+
+  def discounted_revenue(revenue)
+    revenue - total_discount
+  end
+
+  def total_discount
+     inv_items = discounted_inv_items
+     total = inv_items.sum do |ii|
+       ii.quantity * ii.unit_price * ii.max_discount / 100.to_f
+     end
+  end
+
+  def discounted_inv_items
+    invoice_items.joins(item: {merchant: :bulk_discounts}, invoice: :transactions)
+      .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
+      .group(:id)
+      .select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount')
   end
 end
