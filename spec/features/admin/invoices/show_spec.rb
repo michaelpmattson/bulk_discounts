@@ -137,11 +137,12 @@ RSpec.describe 'admin invoices show page', type: :feature do
     end
 
     it 'displays total discounted revenue' do
-      # visit admin_invoice_path(@invoice_1.id)
-      # save_and_open_page
-      # expect(page).to have_content("Total Discounted Revenue: $47.45")
+      visit admin_invoice_path(@invoice_1.id)
+      save_and_open_page
+      expect(page).to have_content("Total Discounted Revenue: $47.45")
 
       visit admin_invoice_path(@invoice_2.id)
+      save_and_open_page
       expect(page).to have_content("Total Discounted Revenue: $129.25")
     end
   end
