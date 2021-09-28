@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'the merchant bulk discounts index' do
   before(:each) do
+    stub_request(:get, "https://date.nager.at/api/v1/Get/US/#{Time.now.year}").to_return(body: File.read(File.join('spec', 'fixtures', 'nager_date_public_holidays.json')))
+
     @merchant_1       = create(:merchant)
     @bulk_discount_11 = create(:bulk_discount, merchant: @merchant_1)
     @bulk_discount_12 = create(:bulk_discount, merchant: @merchant_1, percentage: 25, quantity_threshold: 25)
@@ -59,4 +61,14 @@ RSpec.describe 'the merchant bulk discounts index' do
     expect(page).to_not have_content(@bulk_discount_11.percentage)
     expect(page).to_not have_content(@bulk_discount_11.quantity_threshold)
   end
+
+  it 'has an upcoming holidays section with next 3 names and dates' do
+    
+  end
 end
+
+
+# As a merchant
+# When I visit the discounts index page
+# I see a section with a header of "Upcoming Holidays"
+# In this section the name and date of the next 3 upcoming US holidays are listed.
