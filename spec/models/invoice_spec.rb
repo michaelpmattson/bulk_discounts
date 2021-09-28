@@ -271,4 +271,46 @@ RSpec.describe Invoice, type: :model do
       end
     end
   end
+
+  describe '.total_discount(discounted_inv_items)' do
+    it 'calculates the total discount for a list of inv items' do
+      merchant_a      = create(:merchant)
+      bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+      bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
+      item_a1         = create(:item, merchant: merchant_a)
+      item_a2         = create(:item, merchant: merchant_a)
+      invoice_a       = create(:invoice)
+      invoice_item_a1 = create(:invoice_item, item: item_a1, invoice: invoice_a, quantity: 12, unit_price: 10)
+      invoice_item_a2 = create(:invoice_item, item: item_a2, invoice: invoice_a, quantity: 15, unit_price: 5)
+
+      transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+      discounted_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+
+      expect(invoice_a.total_discount(discounted_inv_items)).to eq(46.5)
+    end
+  end
+
+  describe '.discounted_revenue(revenue, discounted_inv_items)' do
+    it 'calculates revenue after discounts' do
+      merchant_a      = create(:merchant)
+      bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+      bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
+      item_a1         = create(:item, merchant: merchant_a)
+      item_a2         = create(:item, merchant: merchant_a)
+      invoice_a       = create(:invoice)
+      invoice_item_a1 = create(:invoice_item, item: item_a1, invoice: invoice_a, quantity: 12, unit_price: 10)
+      invoice_item_a2 = create(:invoice_item, item: item_a2, invoice: invoice_a, quantity: 15, unit_price: 5)
+
+      transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+      # 195
+      revenue = invoice_a.total_revenue_by_merchant_id(merchant_a.id)
+
+      # total_discount: 46.5
+      discounted_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+
+      expect(invoice_a.discounted_revenue(revenue, discounted_inv_items)).to eq(148.5)
+    end
+  end
 end
