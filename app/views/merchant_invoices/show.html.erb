@@ -2,7 +2,7 @@
 <p>Status: <%= @invoice.status %></p>
 <p>Created on: <%= @invoice.formatted_date %></p>
 <p>Total Revenue: <%= number_to_currency(@revenue) %></p>
-<p>Total Discounted Revenue: <%= number_to_currency(@invoice.discounted_revenue_by_merchant_id(@revenue, @merchant.id)) %></p>
+<p>Total Discounted Revenue: <%= number_to_currency(@discounted_revenue) %></p>
 
 <p>Customer: <%= @invoice.customer_name %></p>
 

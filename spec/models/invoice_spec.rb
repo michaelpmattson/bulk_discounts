@@ -190,22 +190,15 @@ RSpec.describe Invoice, type: :model do
         invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 5)
         transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
 
-        discount = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id).first
-        expect(discount).to eq(invoice_item_a)
-        expect(discount.max_discount).to eq(bulk_discount_a.percentage)
-        expect(discount.item_id).to eq(item_a.id)
-        expect(discount.id).to eq(invoice_item_a.id)
-        expect(discount.quantity).to eq(invoice_item_a.quantity)
-        expect(discount.unit_price).to eq(invoice_item_a.unit_price)
+        discount_inv_item = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id).first
+        expect(discount_inv_item).to eq(invoice_item_a)
+        expect(discount_inv_item.max_discount).to eq(bulk_discount_a.percentage)
+        expect(discount_inv_item.item_id).to eq(item_a.id)
+        expect(discount_inv_item.id).to eq(invoice_item_a.id)
+        expect(discount_inv_item.quantity).to eq(invoice_item_a.quantity)
+        expect(discount_inv_item.unit_price).to eq(invoice_item_a.unit_price)
       end
 
-      # Merchant A has two Bulk Discounts
-      # Bulk Discount A is 20% off 10 items
-      # Bulk Discount B is 30% off 15 items
-      # Invoice A includes two of Merchant A’s items
-      # Item A is ordered in a quantity of 12
-      # Item B is ordered in a quantity of 15
-      # In this example, Item A should discounted at 20% off, and Item B should discounted at 30% off.
       it 'returns the greater discount when a higher threshold is met' do
         merchant_a      = create(:merchant)
         bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
@@ -217,25 +210,17 @@ RSpec.describe Invoice, type: :model do
         invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 15)
         transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
 
-        discounts = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
-        expect(discounts.length).to eq(2)
-        expect(discounts).to eq([invoice_item_a, invoice_item_b])
+        disc_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+        expect(disc_inv_items.length).to eq(2)
+        expect(disc_inv_items).to eq([invoice_item_a, invoice_item_b])
 
-        discount_a = discounts.first
-        expect(discount_a.max_discount).to eq(bulk_discount_a.percentage)
-        discount_b = discounts.last
-        expect(discount_b.max_discount).to eq(bulk_discount_b.percentage)
+        dii_a = disc_inv_items.first
+        expect(dii_a.max_discount).to eq(bulk_discount_a.percentage)
+        dii_b = disc_inv_items.last
+        expect(dii_b.max_discount).to eq(bulk_discount_b.percentage)
       end
-      # Example 4
-      #
-      # Merchant A has two Bulk Discounts
-      # Bulk Discount A is 20% off 10 items
-      # Bulk Discount B is 15% off 15 items
-      # Invoice A includes two of Merchant A’s items
-      # Item A is ordered in a quantity of 12
-      # Item B is ordered in a quantity of 15
-      # In this example, Both Item A and Item B should discounted at 20% off. Additionally, there is no scenario where Bulk Discount B can ever be applied.
-      it 'returns the greater discount when a higher threshold is met' do
+
+      it 'returns the greater discount regardless of higher thresholds' do
         merchant_a      = create(:merchant)
         bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
         bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 15, quantity_threshold: 15)
@@ -246,28 +231,17 @@ RSpec.describe Invoice, type: :model do
         invoice_item_b  = create(:invoice_item, item: item_b, invoice: invoice_a, quantity: 15)
         transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
 
-        discounts = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
-        expect(discounts.length).to eq(2)
-        expect(discounts).to eq([invoice_item_a, invoice_item_b])
+        disc_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+        expect(disc_inv_items.length).to eq(2)
+        expect(disc_inv_items).to eq([invoice_item_a, invoice_item_b])
 
-        discount_a = discounts.first
-        expect(discount_a.max_discount).to eq(bulk_discount_a.percentage)
-        discount_b = discounts.last
-        expect(discount_b.max_discount).to eq(bulk_discount_a.percentage)
+        dii_a = disc_inv_items.first
+        expect(dii_a.max_discount).to eq(bulk_discount_a.percentage)
+        dii_b = disc_inv_items.last
+        expect(dii_b.max_discount).to eq(bulk_discount_a.percentage)
       end
-      # Example 5
-      #
-      # Merchant A has two Bulk Discounts
-      # Bulk Discount A is 20% off 10 items
-      # Bulk Discount B is 30% off 15 items
-      # Merchant B has no Bulk Discounts
-      # Invoice A includes two of Merchant A’s items
-      # Item A1 is ordered in a quantity of 12
-      # Item A2 is ordered in a quantity of 15
-      # Invoice A also includes one of Merchant B’s items
-      # Item B is ordered in a quantity of 15
-      # In this example, Item A1 should discounted at 20% off, and Item A2 should discounted at 30% off. Item B should not be discounted.
-      it 'returns the greater discount when a higher threshold is met' do
+
+      it 'returns only discounted invoice items for the merchant' do
         merchant_a      = create(:merchant)
         bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
         bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
@@ -283,28 +257,60 @@ RSpec.describe Invoice, type: :model do
 
         transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
 
-        discounts = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
-        expect(discounts.length).to eq(2)
-        expect(discounts).to eq([invoice_item_a1, invoice_item_a2])
+        discounted_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
 
-        discount_a1 = discounts.first
-        expect(discount_a1.max_discount).to eq(bulk_discount_a.percentage)
-        discount_a2 = discounts.last
-        expect(discount_a2.max_discount).to eq(bulk_discount_b.percentage)
+        expect(discounted_inv_items.length).to eq(2)
+        expect(discounted_inv_items).to eq([invoice_item_a1, invoice_item_a2])
+
+        dii_a1 = discounted_inv_items.first
+        expect(dii_a1.max_discount).to eq(bulk_discount_a.percentage)
+        dii_a2 = discounted_inv_items.last
+        expect(dii_a2.max_discount).to eq(bulk_discount_b.percentage)
+
+        expect(discounted_inv_items.include?(invoice_item_b)).to eq(false)
       end
     end
   end
+
+  describe '.total_discount(discounted_inv_items)' do
+    it 'calculates the total discount for a list of inv items' do
+      merchant_a      = create(:merchant)
+      bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+      bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
+      item_a1         = create(:item, merchant: merchant_a)
+      item_a2         = create(:item, merchant: merchant_a)
+      invoice_a       = create(:invoice)
+      invoice_item_a1 = create(:invoice_item, item: item_a1, invoice: invoice_a, quantity: 12, unit_price: 10)
+      invoice_item_a2 = create(:invoice_item, item: item_a2, invoice: invoice_a, quantity: 15, unit_price: 5)
+
+      transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+      discounted_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+
+      expect(invoice_a.total_discount(discounted_inv_items)).to eq(46.5)
+    end
+  end
+
+  describe '.discounted_revenue(revenue, discounted_inv_items)' do
+    it 'calculates revenue after discounts' do
+      merchant_a      = create(:merchant)
+      bulk_discount_a = create(:bulk_discount, merchant: merchant_a, percentage: 20, quantity_threshold: 10)
+      bulk_discount_b = create(:bulk_discount, merchant: merchant_a, percentage: 30, quantity_threshold: 15)
+      item_a1         = create(:item, merchant: merchant_a)
+      item_a2         = create(:item, merchant: merchant_a)
+      invoice_a       = create(:invoice)
+      invoice_item_a1 = create(:invoice_item, item: item_a1, invoice: invoice_a, quantity: 12, unit_price: 10)
+      invoice_item_a2 = create(:invoice_item, item: item_a2, invoice: invoice_a, quantity: 15, unit_price: 5)
+
+      transaction_a   = create(:transaction, invoice: invoice_a, result: 'success')
+
+      # 195
+      revenue = invoice_a.total_revenue_by_merchant_id(merchant_a.id)
+
+      # total_discount: 46.5
+      discounted_inv_items = invoice_a.discounted_inv_items_by_merchant_id(merchant_a.id)
+
+      expect(invoice_a.discounted_revenue(revenue, discounted_inv_items)).to eq(148.5)
+    end
+  end
 end
-
-
-
-# SELECT bulk_discounts.*, MAX(percentage) AS max_percent, invoice_items.* FROM "bulk_discounts"
-#   INNER JOIN "merchants" ON "merchants"."id" = "bulk_discounts"."merchant_id"
-#   INNER JOIN "items" ON "items"."merchant_id" = "merchants"."id"
-#   INNER JOIN "invoice_items" ON "invoice_items"."item_id" = "items"."id"
-#   INNER JOIN "invoices" ON "invoices"."id" = "invoice_items"."invoice_id"
-#   INNER JOIN "transactions" ON "transactions"."invoice_id" = "invoices"."id"
-#     WHERE "bulk_discounts"."merchant_id" = $1
-#     AND (invoice_items.quantity >= bulk_discounts.quantity_threshold)
-#     GROUP BY "bulk_discounts"."id"
-#     ORDER BY "bulk_discounts"."id" ASC LIMIT $2

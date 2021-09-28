@@ -13,8 +13,9 @@ class InvoiceItem < ApplicationRecord
   end
 
   def discount
-    wip = BulkDiscount.joins(merchant: {items: {invoice_items: {invoice: :transactions}}})
-    .where("quantity_threshold <= #{quantity} AND transactions.result = 'success' AND invoice_items.id =  #{id}")
+    BulkDiscount.joins(merchant: {items: {invoice_items: {invoice: :transactions}}})
+    .where("quantity_threshold <= ?", quantity)
+    .where(transactions: {result: :success}, invoice_items: {id: id})
     .order(percentage: :desc)
     .first
   end

@@ -45,49 +45,24 @@ class Invoice < ApplicationRecord
     end
   end
 
-  def discounted_inv_items_by_merchant_id(merchant_id)
+  def discounted_inv_items
     invoice_items.joins(item: {merchant: :bulk_discounts}, invoice: :transactions)
-     .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}, items: {merchant_id: merchant_id})
-     .group(:id)
-     .select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount')
-
-    # wip = merchant.bulk_discounts
-    # .joins(merchant: {invoices: :transactions})
-    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
-    # .select('bulk_discounts.*, invoice_items.*')
-
-    # wip = merchant.bulk_discounts
-    # .joins(merchant: {invoices: :transactions})
-    # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success}).group('invoice_items.id').select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount').order('invoice_items.id')
-    # binding.pry
+    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
+    .group(:id)
+    .select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount')
   end
 
-  def total_discount_by_merchant_id(merchant_id)
-    inv_items = discounted_inv_items_by_merchant_id(merchant_id)
-    total = inv_items.sum do |ii|
+  def discounted_inv_items_by_merchant_id(merchant_id)
+    discounted_inv_items.where(items: {merchant_id: merchant_id})
+  end
+
+  def total_discount(discounted_inv_items)
+    discounted_inv_items.sum do |ii|
       ii.quantity * ii.unit_price * ii.max_discount / 100.to_f
     end
   end
 
-  def discounted_revenue_by_merchant_id(revenue, merchant_id)
-    revenue - total_discount_by_merchant_id(merchant_id)
-  end
-
-  def discounted_revenue(revenue)
-    revenue - total_discount
-  end
-
-  def total_discount
-     inv_items = discounted_inv_items
-     total = inv_items.sum do |ii|
-       ii.quantity * ii.unit_price * ii.max_discount / 100.to_f
-     end
-  end
-
-  def discounted_inv_items
-    invoice_items.joins(item: {merchant: :bulk_discounts}, invoice: :transactions)
-      .where('invoice_items.quantity >= bulk_discounts.quantity_threshold', transactions: {result: :success})
-      .group(:id)
-      .select('invoice_items.*, MAX(bulk_discounts.percentage) AS max_discount')
+  def discounted_revenue(revenue, discounted_inv_items)
+    revenue - total_discount(discounted_inv_items)
   end
 end
