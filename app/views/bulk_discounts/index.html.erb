@@ -5,3 +5,12 @@
 <% end %>
 
 <%= link_to 'Add New Discount', new_merchant_bulk_discount_path %>
+
+<section id='upcoming-holidays'>
+  <h3>Upcoming Holidays:</h3>
+  <ul>
+    <% @upcoming_holidays.each do |holiday| %>
+      <li><%= holiday.name %>, <%= holiday.date %></li>
+    <% end %>
+  </ul>
+</section>

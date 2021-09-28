@@ -58,17 +58,16 @@ RSpec.describe 'the merchant bulk discounts index' do
       expect(page).to have_link('Delete Discount')
     end
 
-    expect(page).to_not have_content(@bulk_discount_11.percentage)
-    expect(page).to_not have_content(@bulk_discount_11.quantity_threshold)
+    expect(page).to_not have_content("Percentage: #{@bulk_discount_11.percentage}")
+    expect(page).to_not have_content("Quantity Threshold: #{@bulk_discount_11.quantity_threshold}")
   end
 
   it 'has an upcoming holidays section with next 3 names and dates' do
-    
+    within '#upcoming-holidays' do
+      expect(page).to have_content("Upcoming Holidays:")
+      expect(page).to have_content("Veterans Day, 2021-11-11")
+      expect(page).to have_content("Thanksgiving Day, 2021-11-25")
+      expect(page).to have_content("Christmas Day, 2021-12-24")
+    end
   end
 end
-
-
-# As a merchant
-# When I visit the discounts index page
-# I see a section with a header of "Upcoming Holidays"
-# In this section the name and date of the next 3 upcoming US holidays are listed.
