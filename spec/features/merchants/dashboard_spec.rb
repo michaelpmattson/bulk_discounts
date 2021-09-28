@@ -22,6 +22,8 @@ RSpec.describe 'Merchant Dashboard page' do
     end
 
     it 'has a link to my bulk discounts' do
+      stub_request(:get, "https://date.nager.at/api/v1/Get/US/#{Time.now.year}").to_return(body: File.read(File.join('spec', 'fixtures', 'nager_date_public_holidays.json')))
+
       click_link('My Discounts')
       expect(current_path).to eq("/merchants/#{@sprouts.id}/bulk_discounts")
     end
