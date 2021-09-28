@@ -9,6 +9,7 @@ class MerchantInvoicesController < ApplicationController
     @invoice = Invoice.find(params[:id])
     @invoice_items = @invoice.invoice_items_by_merchant_id(params[:merchant_id])
     @revenue = @invoice.total_revenue_by_merchant_id(params[:merchant_id])
+    @discounted_revenue = @invoice.discounted_revenue(@revenue, @invoice.discounted_inv_items_by_merchant_id(@merchant.id))
   end
 
 private
