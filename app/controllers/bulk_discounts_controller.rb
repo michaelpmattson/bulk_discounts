@@ -1,10 +1,10 @@
 class BulkDiscountsController < ApplicationController
   def index
     @discounts = BulkDiscount.discounts_by_merchant_id(params[:merchant_id])
+    @upcoming_holidays = PublicHolidaysService.next_three
   end
 
   def new
-
   end
 
   def create
