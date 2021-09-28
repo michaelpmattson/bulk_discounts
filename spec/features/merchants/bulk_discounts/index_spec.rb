@@ -36,15 +36,6 @@ RSpec.describe 'the merchant bulk discounts index' do
   it 'has a link to create a new discount' do
     click_link('Add New Discount')
     expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant_1))
-
-    fill_in(:percentage,         with: 30)
-    fill_in(:quantity_threshold, with: 30)
-    click_on('Create Discount')
-
-    expect(current_path).to eq(merchant_bulk_discounts_path(@merchant_1))
-
-    expect(page).to have_content('Percentage: 30%')
-    expect(page).to have_content('Quantity Threshold: 30')
   end
 
   it 'has a link to delete each discount' do
