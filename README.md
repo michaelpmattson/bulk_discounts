@@ -31,25 +31,22 @@ Project is created with:
 
 ## Setup
 
-This project requires Ruby 2.7.2.
-Rails version: 5.2.6
-
-* Fork this repository
-* Clone your fork
+* Fork / Clone respository
 * From the command line, install gems and set up your DB:
     * `bundle`
     * `rails db:create`
-* Run the test suite with `bundle exec rspec`.
+    * `rails db:migrate`
+    * `rails csv_load:all`
 * Run your development server with `rails s` to see the app in action.
 
 
 * Or view on Heroku:
-[Admin Dashboard](https://rocky-escarpment-73509.herokuapp.com/admin) / 
-[Example Merchant Dashboard](https://rocky-escarpment-73509.herokuapp.com/merchants/1/dashboard)
+[Admin Dashboard](https://mighty-ridge-62010.herokuapp.com/admin) / 
+[Example Merchant Dashboard](https://mighty-ridge-62010.herokuapp.com/merchants/1/dashboard)
 
 
 ## Schema
-![Little Esty Shop Schema](https://user-images.githubusercontent.com/83726180/134429191-0397fbc7-75d4-4220-b61f-6cd846c9d834.png)
+![Schema](https://user-images.githubusercontent.com/826189/135170996-1a6e126f-c78f-4831-8173-32a6f7461cb7.png)
 
  
 ## Features
@@ -59,9 +56,10 @@ Features ready and to-do list
 * Upcoming holidays are viewable on the merchant's bulk_discounts page using [Nager.Date API](https://date.nager.at/swagger/index.html)
 
 To-do list:
-* 
-* 
-* 
+* Extensions including limits on when invoices can be edited/deleted, how completed invoices store discounts
+* Special holiday discount functionality
+* Add Github API info from previous iteration
+* Improved routing and styling
 
 
 ## Status
