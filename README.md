@@ -9,7 +9,7 @@
 * [Features](#features)
 * [Status](#status)
 * [Contact](#contact)
-* 
+
 ## General Info
 
 "Little Esty Shop" is a group project that requires students to build a fictitious e-commerce platform where merchants and admins can manage inventory and fulfill customer invoices.
@@ -68,6 +68,7 @@ Project is: in-progress
 
 ## Contact
 Created by
+
 Bulk Discounts:
 * [@michaelpmattson](https://github.com/michaelpmattson)
 
